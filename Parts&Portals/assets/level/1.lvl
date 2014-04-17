@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level width="1400" height="780">
+<entity x="10" y="100" type="platformmiddle"/>	
+
+<entity x="50" y="500" type="platformmiddle"/>	
+<entity x="90" y="500" type="platformleft"/>	
+<entity x="130" y="500" type="platformright"/>	
+
+<entity x="170" y="200" type="enemy"/>
+
+<entity x="200" y="200" type="enemy"/>
+
+
+<entity x="110" y="110" type="platformmiddle"/>
+<entity x="150" y="100" type="platformmiddle"/>
+<entity x="190" y="100" type="platformmiddle"/>
+<entity x="230" y="100" type="platformmiddle"/>
+<entity x="270" y="100" type="platformmiddle"/>
+<entity x="310" y="100" type="platformmiddle"/>
+<entity x="350" y="100" type="platformmiddle"/>
+<entity x="390" y="100" type="platformmiddle"/>
+
+<entity x="410" y="100" type="platformmiddle"/>
+
+
+
+
+<entity x="450" y="100" type="platformmiddle"/>	
+<entity x="490" y="100" type="platformmiddle"/>
+<entity x="530" y="100" type="platformmiddle"/>
+<entity x="570" y="100" type="platformmiddle"/>
+<entity x="610" y="100" type="platformmiddle"/>
+<entity x="650" y="100" type="platformmiddle"/>
+<entity x="690" y="100" type="platformmiddle"/>
+<entity x="630" y="100" type="platformmiddle"/>
+<entity x="670" y="100" type="platformmiddle"/>
+<entity x="710" y="100" type="platformmiddle"/>
+
+<entity x="750" y="100" type="platformmiddle"/>
+<entity x="790" y="100" type="platformmiddle"/>
+<entity x="810" y="100" type="platformmiddle"/>
+<entity x="850" y="100" type="platformmiddle"/>
+
+	
+	<entity x="2280" y="550" type="levelComplete"/>
+	<entity x="200" y="200" type="player"/>
+</level>
