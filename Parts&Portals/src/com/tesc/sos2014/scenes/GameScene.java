@@ -11,7 +11,6 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.scene.background.IBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -20,27 +19,27 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
-//import org.andengine.util.align.HorizontalAlign;
+import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
 import org.xml.sax.Attributes;
-import org.andengine.util.HorizontalAlign;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
-import com.tesc.sos2014.objects.Monkey;
+import com.tesc.sos2014.objects.BaseEnemy;
 import com.tesc.sos2014.objects.Player;
+
 
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
@@ -50,7 +49,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private HUD gameHUD;
 	private Text scoreText;
 	private PhysicsWorld physicsWorld;
-	//private LevelCompleteWindow levelCompleteWindow;
+//	private LevelCompleteWindow levelCompleteWindow;
 	
 	private static final String TAG_ENTITY = "entity";
 	private static final String TAG_ENTITY_ATTRIBUTE_X = "x";
@@ -71,7 +70,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 	
 	private Player player;
-	private Monkey enemy;
+	private BaseEnemy enemy;
 	
 	private Text gameOverText;
 	private boolean gameOverDisplayed = false;
@@ -146,7 +145,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
 		
-		levelLoader.registerEntityLoader("Null", new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
+		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
 		{
 			public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException 
 			{
@@ -158,15 +157,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 				return GameScene.this;
 			}
-
-			@Override
-			public IEntity onLoadEntity(String arg0, Attributes arg1) {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		});
 		
-		levelLoader.registerEntityLoader("Null2",new EntityLoader<SimpleLevelEntityLoaderData>(TAG_ENTITY)
+		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(TAG_ENTITY)
 		{
 			public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException
 			{
@@ -252,7 +245,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY))
 				{
-					enemy = new Monkey(x, y, vbom, camera, physicsWorld)
+					enemy = new BaseEnemy(x, y, vbom, camera, physicsWorld)
 					{
 						@Override
 						protected void onManagedUpdate(float pSecondsElapsed) 
@@ -323,8 +316,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 							if (player.collidesWith(this))
 							{
 								//levelCompleteWindow.display(StarsCount.TWO, GameScene.this, camera);
-								this.setVisible(false);
-								this.setIgnoreUpdate(true);
+								//this.setVisible(false);
+								//this.setIgnoreUpdate(true);
 							}
 						}
 					};
@@ -339,20 +332,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 				return levelObject;
 			}
-
-			@Override
-			public IEntity onLoadEntity(String arg0, Attributes arg1) {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		});
 
-		try {
-			levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
 	}
 	
 	private void createGameOverText()
@@ -371,10 +353,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private void createHUD()
 	{
 		gameHUD = new HUD();
-		HorizontalAlign pHorizontalAlign = null ;
-		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", vbom);
-		scoreText.setHorizontalAlign(pHorizontalAlign.LEFT);
-		scoreText.setSkewCenter(0, 0);	//Changed from setAnchorCenter
+		
+		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+		scoreText.setAnchorCenter(0, 0);	
 		scoreText.setText("Score: 100");
 		gameHUD.attachChild(scoreText);
 		
@@ -383,7 +364,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private void createBackground()
 	{
-		setBackground((IBackground) Color.BLACK);//HACK!!!!!!!!!!!!!!!!!!!!!!
+		setBackground(new Background(Color.BLACK));
 	}
 	
 	private void addToScore(int i)

@@ -5,6 +5,7 @@ import org.andengine.entity.scene.background.IBackground;
 import org.andengine.entity.text.Text;
 import org.andengine.util.adt.color.Color;
 
+
 import com.tesc.sos2014.managers.SceneManager.SceneType;
 
 
@@ -15,7 +16,9 @@ public class LoadingScene extends BaseScene
 	public void createScene()
 	{
 		//HACK!!!!! May not Work!!!
-		setBackground((IBackground) Color.WHITE);
+		setBackground(new Background(Color.WHITE));
+		attachChild(new Text(400, 240, resourcesManager.font, "Loading Resources...", vbom));
+	
 		//HACK!!!!!
 		
 		

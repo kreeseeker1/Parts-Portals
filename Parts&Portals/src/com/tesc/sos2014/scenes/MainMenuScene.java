@@ -13,7 +13,6 @@ import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
 
 
-
 public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener{
 	
 	//---------------------------------------------
@@ -97,19 +96,16 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 			
 			menuChildScene.addMenuItem(playMenuItem);
 			menuChildScene.addMenuItem(optionsMenuItem);
-			
-			
-			
 			menuChildScene.buildAnimations();
 			menuChildScene.setBackgroundEnabled(false);
-			
 			//No getters for these values in original code 
-			//playMenuItem.setPosition(super.getWidth() + 100, super.getHeight() - 100);
-			//optionsMenuItem.setPosition(super.getWidth() + 100, super.getHeight() - 25);
+			//fixed by correct importation and implementation of andengine version
+			playMenuItem.setPosition(super.getWidth() + 100, super.getHeight() - 100);
+			optionsMenuItem.setPosition(super.getWidth() + 100, super.getHeight() - 25);
 			
 			menuChildScene.setOnMenuItemClickListener(this);
 			
 			setChildScene(menuChildScene);
-		}
-
+		
+	}
 }
