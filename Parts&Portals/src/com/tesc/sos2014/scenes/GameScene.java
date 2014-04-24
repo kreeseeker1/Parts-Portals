@@ -143,8 +143,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		Vector <Sprite> bul = new Vector(100);
 		
-		for(int i = 0; i<= bul.size();i ++)
-		{
+		/*for(int i = 0; i<= bul.size();i ++)
+		{*/
 		int lifespan = 100;
 		float x = entity.getX();
 		float y = entity.getY();
@@ -157,8 +157,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		bulletBody.setLinearVelocity(speed);
 		
-		bul.add(bullet);
-		}
+		//bul.add(bullet);
+		//}
 		
 		this.attachChild(bullet);
 		
@@ -388,7 +388,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 										// this.setFootContactsZero();
 									}
 									
-									if(bullet.collidesWith(this))
+									/*if(bullet.collidesWith(this))
 									{
 										this.takeDamage(-50);
 										if(this.getLife() <= 0)
@@ -399,7 +399,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 											this.squish();
 											
 										}
-									}
+									}*/
 
 									if (life <= 0)
 									{
