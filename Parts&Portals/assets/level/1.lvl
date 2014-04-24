@@ -10,6 +10,74 @@
 
 <entity x="200" y="200" type="enemy"/>
 
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="180" y="200" type="enemy"/>
+
+<entity x="210" y="200" type="enemy"/>
+
+<entity x="280" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+
+
+
+<entity x="170" y="200" type="enemy"/>
+
+<entity x="200" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="180" y="200" type="enemy"/>
+
+<entity x="210" y="200" type="enemy"/>
+
+<entity x="280" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+
+
+<entity x="190" y="200" type="enemy"/>
+
+<entity x="230" y="200" type="enemy"/>
+
+<entity x="260" y="200" type="enemy"/>
+
+<entity x="370" y="200" type="enemy"/>
+
+<entity x="110" y="200" type="enemy"/>
+
+<entity x="250" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="330" y="200" type="enemy"/>
+
+
+
+
+<entity x="190" y="200" type="enemy"/>
+
+<entity x="230" y="200" type="enemy"/>
+
+<entity x="260" y="200" type="enemy"/>
+
+<entity x="370" y="200" type="enemy"/>
+
+<entity x="110" y="200" type="enemy"/>
+
+<entity x="250" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="330" y="200" type="enemy"/>
+
 
 <entity x="110" y="110" type="platformmiddle"/>
 <entity x="150" y="100" type="platformmiddle"/>
@@ -36,12 +104,32 @@
 <entity x="670" y="100" type="platformmiddle"/>
 <entity x="710" y="100" type="platformmiddle"/>
 
+
+<entity x="750" y="150" type="platformmiddle"/>
+<entity x="750" y="190" type="platformmiddle"/>
+<entity x="750" y="210" type="platformmiddle"/>
+<entity x="750" y="250" type="platformmiddle"/>
+
+<entity x="750" y="290" type="platformmiddle"/>
+<entity x="750" y="310" type="platformmiddle"/>
+<entity x="750" y="350" type="platformmiddle"/>
+
+<entity x="750" y="390" type="platformmiddle"/>
+<entity x="750" y="410" type="platformmiddle"/>
+
+
 <entity x="750" y="100" type="platformmiddle"/>
 <entity x="790" y="100" type="platformmiddle"/>
 <entity x="810" y="100" type="platformmiddle"/>
 <entity x="850" y="100" type="platformmiddle"/>
 
+<entity x="890" y="100" type="platformmiddle"/>
+<entity x="930" y="100" type="platformmiddle"/>
+<entity x="970" y="100" type="platformmiddle"/>
+
+
+<entity x="850" y="500" type="health"/>
 	
-	<entity x="2280" y="550" type="levelComplete"/>
-	<entity x="200" y="200" type="player"/>
+	
+	<entity x="750" y="410" type="player"/>
 </level>
