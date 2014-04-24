@@ -13,30 +13,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
 
 
-public abstract class BaseEnemy extends AnimatedSprite {
+public abstract class Health extends AnimatedSprite {
 	// ---------------------------------------------
 	// VARIABLES
 	// ---------------------------------------------
 
-	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+	final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
 	private Body body;
 	
-	int life = 100;
-
-	public int getLife()
-	{
-		return life;
-	}
-
-	public void setLife(int life)
-	{
-		this.life = life;
-	}
 	
-	public void takeDamage(int dmg)
-	{
-		this.life += dmg;
-	}
+	
 
 	private boolean goRight = false;
 	private boolean goLeft = false;
@@ -48,15 +34,15 @@ public abstract class BaseEnemy extends AnimatedSprite {
 	// CONSTRUCTOR
 	// ---------------------------------------------
 
-	public BaseEnemy(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
+	public Health(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
 	{
 		//x = com.tesc.sos2014.managers.ResourcesManager.getInstance().enemy.deepCopy()
 		
-		super(pX, pY, ResourcesManager.getInstance().enemy.deepCopy(), vbo);
+		super(pX, pY, ResourcesManager.getInstance().health.deepCopy(), vbo);
 		super.setSize(50, 45);
 		//this.setSize(75, 50);
 		createPhysics(camera, physicsWorld);
-		this.animate(ENEMY_ANIMATE,0,2,true);
+		this.animate(HEALTH_ANIMATE,0,1,true);
 		
 		//camera.setChaseEntity(this);
 
@@ -71,7 +57,7 @@ public abstract class BaseEnemy extends AnimatedSprite {
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-5, 0, 0));
 		//dynamic bodies can collide with each other and kinematic and static bodies
 
-		body.setUserData("enemy");    //Set the sprite image
+		body.setUserData("health");    //Set the sprite image
 		body.setFixedRotation(false); //wont tumble I assume
 		
 
@@ -84,7 +70,7 @@ public abstract class BaseEnemy extends AnimatedSprite {
 				super.onUpdate(pSecondsElapsed);//This is very important to be in this exact spot
 				//camera.onUpdate(0.1f);
 
-				if (getY() <= 0) //Body falls below bottom of scene
+				/*if (getY() <= 0) //Body falls below bottom of scene
 				{
 					onDie();
 				}
@@ -102,7 +88,7 @@ public abstract class BaseEnemy extends AnimatedSprite {
 					body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));//with the speed f 3 move left
 					//I think that this is where we could add code to get the character to face the right direction
 					//animate(ENEMY_ANIMATE, 0, 2, true);
-				}
+				}*/
 			}
 		});
 	}
@@ -110,7 +96,7 @@ public abstract class BaseEnemy extends AnimatedSprite {
 	public void runRight() {
 		goRight = true;
 		goLeft =false;
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		final long[] HEALTH_ANIMATE = new long[] { 100, 100, 100 };
 		//animate(ENEMY_ANIMATE, 0, 2, true);
 
 		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
@@ -120,14 +106,14 @@ public abstract class BaseEnemy extends AnimatedSprite {
 
 	public void animateMe() {
 		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
 		//animate(ENEMY_ANIMATE, 0, 2, true);
 	}//
 
 	public void runLeft() {
 		goRight = false;
 		goLeft = true;
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
 	//	animate(ENEMY_ANIMATE, 0, 2, true);
 
 	}
@@ -139,6 +125,11 @@ public abstract class BaseEnemy extends AnimatedSprite {
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
+	
+	public void squish()
+	{
+		body.setActive(false);
+	}
 
 	public void jump()
 	{
@@ -147,11 +138,6 @@ public abstract class BaseEnemy extends AnimatedSprite {
 			return; 
 		}
 		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10)); 
-	}
-	
-	public void squish()
-	{
-		body.setActive(false);
 	}
 	
 	public int setFootContactsZero()

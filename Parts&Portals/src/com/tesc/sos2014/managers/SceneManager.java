@@ -5,21 +5,16 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
-//import managers
-import com.tesc.sos2014.managers.ResourcesManager;
-import com.tesc.sos2014.managers.SceneManager;
-import com.tesc.sos2014.managers.SceneManager.SceneType;
-
-//import Scenes
 import com.tesc.sos2014.scenes.BaseScene;
 import com.tesc.sos2014.scenes.GameScene;
 import com.tesc.sos2014.scenes.LoadingScene;
 import com.tesc.sos2014.scenes.MainMenuScene;
 import com.tesc.sos2014.scenes.SplashScene;
 
-public class SceneManager {
 
 
+public class SceneManager
+{
 	//---------------------------------------------
 	// SCENES
 	//---------------------------------------------
@@ -155,5 +150,4 @@ public class SceneManager {
 	{
 		return currentScene;
 	}
-
 }

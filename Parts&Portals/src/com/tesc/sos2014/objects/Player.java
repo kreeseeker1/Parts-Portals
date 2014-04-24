@@ -1,6 +1,8 @@
 package com.tesc.sos2014.objects;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -10,6 +12,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 
 
 public abstract class Player extends AnimatedSprite
@@ -22,6 +25,7 @@ public abstract class Player extends AnimatedSprite
 	
 	private boolean right = false;
 	private boolean left = false;
+	private boolean stop = false;
 	
 	private int footContacts = 0;
 	
@@ -68,23 +72,83 @@ public abstract class Player extends AnimatedSprite
 				{
 					body.setLinearVelocity(new Vector2(-5, body.getLinearVelocity().y)); 
 				}
+				
+				if(stop)
+				{
+					body.setLinearVelocity(new Vector2(0, body.getLinearVelocity().y)); 
+				}
 	        }
 		});
 	}
+	
 	
 	public void runRight()
 	{
 		right = true;
 		left = false;
+		stop = false;
 		
 		final long[] PLAYER_ANIMATE = new long[] { 100,100,100,100,100,100,100 };
 		
 		animate(PLAYER_ANIMATE, 0, 6, true);
 	}
 	
+	/*public Body fireGun(Scene s)
+	{
+		float x = this.getX();
+		float y = this.getY();
+		
+		Body b = null;
+		
+		b.setBullet(true);
+		
+		b.setActive(true);
+		
+		
+		//CircleShape bullet = null;
+		
+		Vector2 v = new Vector2(x,y);
+		bullet.setRadius(4l);
+		bullet.setPosition(v);
+		
+		//s.attachChild((b);
+		
+		if(facingLeft())
+		{
+			b.setLinearVelocity(-3, 0);
+			
+		}
+		else if(facingRight())
+		{
+
+		return b;}*/
+		
+		
+		
+	//}
+	
+	public boolean facingLeft()
+	{
+		return left;
+	}
+	
+	public boolean facingRight()
+	{
+		return right;
+	}
+	
+	public void stop()
+	{
+		right = false;
+		left = false;
+		stop = true;
+	}
+	
+	
 	public void runLeft() {
 		right = false;
 		left = true;
+		stop = false;
 
 	}
 	
