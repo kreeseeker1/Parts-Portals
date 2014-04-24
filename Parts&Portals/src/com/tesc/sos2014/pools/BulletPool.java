@@ -2,14 +2,41 @@ package com.tesc.sos2014.pools;
 
 import org.andengine.util.adt.pool.GenericPool;
 
-public class BulletPool <Bullet> extends GenericPool
+import com.tesc.sos2014.objects.Bullet;
+
+public class BulletPool  extends GenericPool<Bullet>
 {
+	public static BulletPool instance;
+	
+	public static BulletPool sharedBulletPool()
+	{
+		if(instance == null)
+		{
+			instance = new BulletPool();
+		}
+		return instance;
+	}
+	
+	private BulletPool()
+	{
+		super();
+	}
+	
 
 	@Override
-	protected Object onAllocatePoolItem()
+	protected Bullet onAllocatePoolItem()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new Bullet();
+	}
+	
+	protected void onHandleRecycleItem(final Bullet b)
+	{
+	
+		
+		b.sprite.clearEntityModifiers();
+		b.sprite.clearUpdateHandlers();
+		b.sprite.setVisible(false);
+		b.sprite.detachSelf();
 	}
 
 }

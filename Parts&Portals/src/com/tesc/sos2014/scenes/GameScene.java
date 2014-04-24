@@ -3,6 +3,8 @@ package com.tesc.sos2014.scenes;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -55,21 +57,25 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
+import com.tesc.sos2014.objects.Bullet;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
 
 import com.tesc.sos2014.objects.Player;
+import com.tesc.sos2014.pools.BulletPool;
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
 	long newTime = System.nanoTime();
 	long oldTime;
 
+	
+	
 	private int life = 1000;
 
 	private HUD gameHUD;
 	private Text scoreText;
-	private PhysicsWorld physicsWorld;
+	public PhysicsWorld physicsWorld;
 	
 
 	// private LevelCompleteWindow levelCompleteWindow;
@@ -92,12 +98,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY = "enemy";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 
+	private static GameScene instance;
+	
 	private Player player;
 	private Monkey enemy;
 	private Health  health;
 	
-	private Sprite bullet;
-	private Body bulletBody =null;
+	public LinkedList<Bullet> bulletList = new LinkedList();
+	
+	/*bulletList = new LinkedList();*/
+	public int bulletCount =0;
+	
+	/*private Sprite bullet;
+	private Body bulletBody =null;*/
 	private FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	private Text gameOverText;
@@ -111,6 +124,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
+		/*Bullet initBullet = new Bullet();
+		
+		bulletList.add(initBullet);
+		//bulletList.add(new Bullet);
+*/		
+		
+		
 		createBackground();
 		createHUD();
 		//fire();
@@ -149,7 +169,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		float x = entity.getX();
 		float y = entity.getY();
 	
-		bullet = new Sprite(x,y,ResourcesManager.getInstance().bullet.deepCopy(),vbom);
+		/*bullet = new Sprite(x,y,ResourcesManager.getInstance().bullet.deepCopy(),getVbom());
 
 		bulletBody = PhysicsFactory.createCircleBody(this.physicsWorld, bullet, BodyType.DynamicBody, fd);
 		this.physicsWorld.registerPhysicsConnector(new PhysicsConnector(bullet,bulletBody,true,true));
@@ -160,7 +180,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		//bul.add(bullet);
 		//}
 		
-		this.attachChild(bullet);
+		this.attachChild(bullet);*/
 		
 		/*for(int i =0; i<= ba.size() ; i++)
 		{
@@ -169,6 +189,24 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			
 
 		
+	}
+	
+	public void cleaner() {
+	    synchronized (this) {
+	        Iterator it = bulletList.iterator();
+	        while (it.hasNext()) {
+	            Bullet b = (Bullet) it.next();
+	            if (b.sprite.getY() <= -b.sprite.getHeight()) {
+	                BulletPool.sharedBulletPool().recyclePoolItem(b);
+	                it.remove();
+	                continue;
+	            }
+	        }
+	    }
+	}
+	
+	public static GameScene getSharedInstance() {
+	    return instance;
 	}
 
 	@Override
@@ -219,7 +257,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private void loadLevel(int levelID)
 	{
-		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(vbom);
+		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(getVbom());
 
 		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
 
@@ -257,19 +295,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					 if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATL))
 					{
-						levelObject = new Sprite(x, y, resourcesManager.platformleft, vbom);
+						levelObject = new Sprite(x, y, resourcesManager.platformleft, getVbom());
 						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformleft");
 					}
 
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATM))
 					{
-						levelObject = new Sprite(x, y, resourcesManager.platformmiddle, vbom);
+						levelObject = new Sprite(x, y, resourcesManager.platformmiddle, getVbom());
 						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 					}
 
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATR))
 					{
-						levelObject = new Sprite(x, y, resourcesManager.platformright, vbom);
+						levelObject = new Sprite(x, y, resourcesManager.platformright, getVbom());
 						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformright");
 					}
 					/*
@@ -295,7 +333,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HEALTH))
 					{
 						
-						health = new Health(x, y, vbom, camera, physicsWorld)
+						health = new Health(x, y, getVbom(), camera, physicsWorld)
 						{
 							
 							@Override
@@ -348,7 +386,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER))
 					{
-						player = new Player(x, y, vbom, camera, physicsWorld)
+						player = new Player(x, y, getVbom(), camera, physicsWorld)
 							{
 
 								@Override
@@ -365,7 +403,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY))
 					{
-						enemy = new Monkey(x, y, vbom, camera, physicsWorld)
+						enemy = new Monkey(x, y, getVbom(), camera, physicsWorld)
 							{
 								@Override
 								protected void onManagedUpdate(float pSecondsElapsed)
@@ -460,7 +498,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						levelObject = enemy;
 					} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE))
 					{
-						levelObject = new Sprite(x, y, resourcesManager.complete_stars_region, vbom)
+						levelObject = new Sprite(x, y, resourcesManager.complete_stars_region, getVbom())
 							{
 								@Override
 								protected void onManagedUpdate(float pSecondsElapsed)
@@ -493,7 +531,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private void createGameOverText()
 	{
-		gameOverText = new Text(0, 0, resourcesManager.font, "Game Over!", vbom);
+		gameOverText = new Text(0, 0, resourcesManager.font, "Game Over!", getVbom());
 	}
 
 	private void displayGameOverText()
@@ -508,11 +546,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		gameHUD = new HUD();
 
-		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
 		scoreText.setAnchorCenter(0, 0);
 		scoreText.setText("Score: 100");
 
-		final Rectangle left = new Rectangle(20, 90, 60, 60, vbom)
+		final Rectangle left = new Rectangle(20, 90, 60, 60, getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
@@ -527,7 +565,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				};
 			};
 
-		final Rectangle right = new Rectangle(camera.getWidth() - 60, 90, 60, 60, vbom)
+		final Rectangle right = new Rectangle(camera.getWidth() - 60, 90, 60, 60, getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
@@ -542,13 +580,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				};
 			};
 			
-			final Rectangle fire = new Rectangle(camera.getWidth() - 60, 180, 60, 60, vbom)
+			final Rectangle fire = new Rectangle(camera.getWidth() - 60, 180, 60, 60, getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
 					if (touchEvent.isActionDown())
 					{
-						fire(player);
+						player.shoot();
 					}
 					/*
 					 * else { player.stop(); }

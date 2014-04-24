@@ -24,6 +24,7 @@ import com.tesc.sos2014.managers.SceneManager;
 public class MainGameEngineActivity extends BaseGameActivity
 {
 	private BoundCamera camera;
+	static MainGameEngineActivity instance;
 	
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) 
@@ -82,4 +83,12 @@ public class MainGameEngineActivity extends BaseGameActivity
 		super.onDestroy();//Engine destruction?
 		System.exit(0);	
 	}
+
+	public static MainGameEngineActivity getSharedInstance()
+	{
+		
+		return instance;
+	}
+	
+
 }
