@@ -106,11 +106,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	public LinkedList<Bullet> bulletList = new LinkedList();
 	
-	/*bulletList = new LinkedList();*/
+	
 	public int bulletCount =0;
 	
-	/*private Sprite bullet;
-	private Body bulletBody =null;*/
+	
 	private FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	private Text gameOverText;
@@ -124,72 +123,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
-		/*Bullet initBullet = new Bullet();
-		
-		bulletList.add(initBullet);
-		//bulletList.add(new Bullet);
-*/		
-		
-		
 		createBackground();
 		createHUD();
-		//fire();
 		createPhysics();
 		loadLevel(1);
 		createGameOverText();
-
-		// levelCompleteWindow = new LevelCompleteWindow(vbom);
-
 		setOnSceneTouchListener(this);
 	}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private void fire(IEntity entity)
-	{
 
-		//Body[] ba = new Body[this.physicsWorld.getBodyCount() ];
-		
-		/*Vector<Body> ba = new Vector();
-		
-		while(this.physicsWorld.getBodies().hasNext())
-		{
-			
-			ba.add(this.physicsWorld.getBodies().next());
-		}*/
-		
-		
-		//this.physicsWorld.getBodies().equals(bullet);
-		
-		//Vector <Sprite> bul = new Vector(100);
-		
-		/*for(int i = 0; i<= bul.size();i ++)
-		{*/
-		//int lifespan = 100;
-		float x = entity.getX();
-		float y = entity.getY();
-	
-		/*bullet = new Sprite(x,y,ResourcesManager.getInstance().bullet.deepCopy(),getVbom());
-
-		bulletBody = PhysicsFactory.createCircleBody(this.physicsWorld, bullet, BodyType.DynamicBody, fd);
-		this.physicsWorld.registerPhysicsConnector(new PhysicsConnector(bullet,bulletBody,true,true));
-		final Vector2 speed = Vector2Pool.obtain(50,0);
-		
-		bulletBody.setLinearVelocity(speed);
-		
-		//bul.add(bullet);
-		//}
-		
-		this.attachChild(bullet);*/
-		
-		/*for(int i =0; i<= ba.size() ; i++)
-		{
-			Log.d("Bodies", "Bodies" + ba.get(i).toString());
-		}*/
-			
-
-		
-	}
 	
 	public void cleaner() {
 	    synchronized (this) {
@@ -228,7 +169,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setChaseEntity(null); // TODO
 		camera.setCenter(400, 240);
 
-		// TODO code responsible for disposing scene
+		// code responsible for disposing scene
 		// removing all game scene objects.
 	}
 
@@ -380,7 +321,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						
 						
 						levelObject = health; 
-							//this codes causes auto-scaling of the object
+						
+						
+						//this codes causes auto-scaling of the object
 						//levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
 					} 
 					
@@ -426,6 +369,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 										// this.setFootContactsZero();
 									}
 									
+									
+									//According to tutorial this following code should be checked in the cleaner method
 									/*if(bullet.collidesWith(this))
 									{
 										this.takeDamage(-50);
@@ -468,20 +413,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									if (player.collidesWith(this) || this.collidesWith(player))
 									{
 										addToScore(-1);
-										// levelCompleteWindow.display(StarsCount.TWO,
-										// GameScene.this, camera);
-										// this.setVisible(false);
-										// this.setIgnoreUpdate(true);
-										// player.onDie();
+										
 									}
 								}
 
-								private void setsp()
-								{
-									// TODO Auto-generated method stub
-
-								}
-
+					
 								private double getDiff(long oldTime, long newTime)
 								{
 									return newTime - oldTime;
