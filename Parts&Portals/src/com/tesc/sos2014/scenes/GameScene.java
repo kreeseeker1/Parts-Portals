@@ -141,11 +141,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		//this.physicsWorld.getBodies().equals(bullet);
 		
-		Vector <Sprite> bul = new Vector(100);
+		//Vector <Sprite> bul = new Vector(100);
 		
 		/*for(int i = 0; i<= bul.size();i ++)
 		{*/
-		int lifespan = 100;
+		//int lifespan = 100;
 		float x = entity.getX();
 		float y = entity.getY();
 	
