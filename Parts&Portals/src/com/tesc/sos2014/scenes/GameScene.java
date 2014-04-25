@@ -299,7 +299,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									this.clearUpdateHandlers();
 									
 									int childCount = this.getParent().getChildCount();
-									//this.getParent().detachChild(this);
+								
 									
 									Log.d("ChildCount :" + childCount, "Total Number of children");
 									
@@ -323,7 +323,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						levelObject = health; 
 						
 						
-						//this codes causes auto-scaling of the object
+						//this codes causes auto-scaling loop of the object
 						//levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
 					} 
 					
@@ -362,7 +362,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									newTime = System.nanoTime();
 
 									// float lastPos = this.getY();
-									if (getDiff(oldTime, newTime) > 1000000 && player.getY() > this.getY() + 5)
+									if (getDiff(oldTime, newTime) > 1000000 && player.getY() > this.getY() + 5 )
 									{
 										this.setFootContactsOne();
 										this.jump();
@@ -431,6 +431,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								}
 							};
 						enemy.setSize(75, 50);
+						enemy.setSpeed((int) (Math.random() * 15));
 						levelObject = enemy;
 					} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE))
 					{

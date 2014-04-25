@@ -22,6 +22,53 @@
 
 <entity x="310" y="200" type="enemy"/>
 
+<entity x="170" y="200" type="enemy"/>
+
+<entity x="200" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="180" y="200" type="enemy"/>
+
+<entity x="210" y="200" type="enemy"/>
+
+<entity x="280" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="190" y="200" type="enemy"/>
+
+<entity x="230" y="200" type="enemy"/>
+
+<entity x="260" y="200" type="enemy"/>
+
+<entity x="370" y="200" type="enemy"/>
+
+<entity x="110" y="200" type="enemy"/>
+
+<entity x="250" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="330" y="200" type="enemy"/>
+
+<entity x="190" y="200" type="enemy"/>
+
+<entity x="230" y="200" type="enemy"/>
+
+<entity x="260" y="200" type="enemy"/>
+
+<entity x="370" y="200" type="enemy"/>
+
+<entity x="110" y="200" type="enemy"/>
+
+<entity x="250" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="330" y="200" type="enemy"/>
 
 
 
@@ -41,7 +88,37 @@
 
 <entity x="310" y="200" type="enemy"/>
 
+<entity x="170" y="200" type="enemy"/>
 
+<entity x="200" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="180" y="200" type="enemy"/>
+
+<entity x="210" y="200" type="enemy"/>
+
+<entity x="280" y="200" type="enemy"/>
+
+<entity x="310" y="200" type="enemy"/>
+
+<entity x="190" y="200" type="enemy"/>
+
+<entity x="230" y="200" type="enemy"/>
+
+<entity x="260" y="200" type="enemy"/>
+
+<entity x="370" y="200" type="enemy"/>
+
+<entity x="110" y="200" type="enemy"/>
+
+<entity x="250" y="200" type="enemy"/>
+
+<entity x="270" y="200" type="enemy"/>
+
+<entity x="330" y="200" type="enemy"/>
 
 <entity x="190" y="200" type="enemy"/>
 
@@ -60,23 +137,6 @@
 <entity x="330" y="200" type="enemy"/>
 
 
-
-
-<entity x="190" y="200" type="enemy"/>
-
-<entity x="230" y="200" type="enemy"/>
-
-<entity x="260" y="200" type="enemy"/>
-
-<entity x="370" y="200" type="enemy"/>
-
-<entity x="110" y="200" type="enemy"/>
-
-<entity x="250" y="200" type="enemy"/>
-
-<entity x="270" y="200" type="enemy"/>
-
-<entity x="330" y="200" type="enemy"/>
 
 
 <entity x="110" y="110" type="platformmiddle"/>
