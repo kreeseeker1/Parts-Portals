@@ -2,6 +2,7 @@ package com.tesc.sos2014.objects;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -10,13 +11,18 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+
+import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
 import com.tesc.sos2014.scenes.GameScene;
+
 
 public abstract class Player extends AnimatedSprite
 {
@@ -25,6 +31,7 @@ public abstract class Player extends AnimatedSprite
 	// ---------------------------------------------
 
 	private Body body;
+	AnimatedSprite as =null;
 	
 	public static Player instance;
 
@@ -33,6 +40,7 @@ public abstract class Player extends AnimatedSprite
 	private boolean stop = false;
 
 	private int footContacts = 0;
+
 
 	// ---------------------------------------------
 	// CONSTRUCTOR
@@ -54,8 +62,9 @@ public abstract class Player extends AnimatedSprite
 	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
 	{
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
+		as = new AnimatedSprite(mHeight, mHeight, ResourcesManager.getInstance().player_region.deepCopy(), MainGameEngineActivity.getSharedInstance().getSharedInstance().getVertexBufferObjectManager());
 
-		body.setUserData("player");
+		body.setUserData(as);
 		body.setFixedRotation(true);
 
 		physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false)
@@ -87,9 +96,11 @@ public abstract class Player extends AnimatedSprite
 				}
 			});
 	}
+	
 
 	public void runRight()
 	{
+		//BulletPool.sharedBulletPool().
 		right = true;
 		left = false;
 		stop = false;
@@ -101,26 +112,43 @@ public abstract class Player extends AnimatedSprite
 
 	public void shoot()
 	{
-		GameScene scene = GameScene.getSharedInstance();
+		Log.v("Player", "PLayer getting MainGameEngineActivity.getSharedInstance().mCurrentScene");
+		GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
+		Log.v("Player", "PLayer got MainGameEngineActivity.getSharedInstance().mCurrentScene");
 		Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();
+		Log.v("Player", "Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();");
 
-		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		Body bulletBody = PhysicsFactory.createCircleBody(GameScene.getSharedInstance().physicsWorld, (IEntity) b, BodyType.DynamicBody, fd);
-		GameScene.getSharedInstance().physicsWorld.registerPhysicsConnector(new PhysicsConnector((IEntity) b, bulletBody, true, true));
-		final Vector2 speed = Vector2Pool.obtain(50, 0);
+		//FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		
+		Log.v("Physics World", scene.getPhysicsWorld().toString());
+		
+		//Body bulletBody = PhysicsFactory.createBoxBody(scene.getPhysicsWorld(),  3f,3f,3f,3f,3f,  BodyType.DynamicBody, fd);
+		//bulletBody.setBullet(true);
+		//bulletBody.setUserData(b.sprite);
+		
+		//scene.getPhysicsWorld().registerPhysicsConnector(new PhysicsConnector( b.sprite, bulletBody, true, true));
+		//final Vector2 speed = Vector2Pool.obtain(50, 0);
 
-		bulletBody.setLinearVelocity(speed);
+		b.sprite.setPosition(this.getX(),this.getY());
+		//bulletBody.setLinearVelocity(speed);
 		
 		
-		b.sprite.setPosition(Player.getSharedInstance().getX(),Player.getSharedInstance().getY());
+		MoveXModifier mod = new MoveXModifier(1.5f,b.sprite.getX(),-b.sprite.getWidth());
+		//MoveYModifier mod2 = new MoveYModifier(1.5f, -b.sprite.getX(),b.sprite.getY());
+		
+		
+		
 		b.sprite.setVisible(true);
 		b.sprite.detachSelf();
+		
 		scene.attachChild(b.sprite);
+		
+	Log.v("Scene Children", "Num of Children " + scene.getChildCount());
 		scene.bulletList.add(b);
 		
-		MoveYModifier mod = new MoveYModifier(1.5f,b.sprite.getY(),-b.sprite.getHeight());
-		
-		b.sprite.registerEntityModifier(mod);
+	b.sprite.registerEntityModifier(mod);
+	//b.sprite.registerEntityModifier(mod);
+
 		scene.bulletCount++;
 
 	}

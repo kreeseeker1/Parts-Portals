@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
 
 
-public abstract class BaseEnemy extends AnimatedSprite {
+public abstract class BaseEnemy extends AnimatedSprite  {
 	// ---------------------------------------------
 	// VARIABLES
 	// ---------------------------------------------
@@ -61,6 +61,10 @@ public abstract class BaseEnemy extends AnimatedSprite {
 		//camera.setChaseEntity(this);
 
 	}
+	
+	/*public BaseEnemy(){
+		
+	}*/
 
 	// ---------------------------------------------
 	// CLASS LOGIC

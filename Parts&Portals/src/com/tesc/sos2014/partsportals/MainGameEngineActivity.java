@@ -16,6 +16,7 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 import android.view.KeyEvent;
 
+import com.tesc.sos2014.managers.GameLoopUpdateHandler;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 
@@ -25,6 +26,7 @@ public class MainGameEngineActivity extends BaseGameActivity
 {
 	private BoundCamera camera;
 	static MainGameEngineActivity instance;
+	public Scene mCurrentScene;
 	
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) 
@@ -34,6 +36,7 @@ public class MainGameEngineActivity extends BaseGameActivity
 	
 	public EngineOptions onCreateEngineOptions()
 	{
+		instance = this;
 		camera = new BoundCamera(0, 0, 800, 480);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), this.camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
@@ -66,15 +69,25 @@ public class MainGameEngineActivity extends BaseGameActivity
 
 	public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException
 	{
+		
+		
+		
+		
 		mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
 		{
             public void onTimePassed(final TimerHandler pTimerHandler) 
             {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
+               
                 SceneManager.getInstance().createMenuScene();
+        		/*mCurrentScene = null;
+        		mCurrentScene = pScene;*/
+        		//getEngine().setScene(mCurrentScene);
             }
 		}));
+		 
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
+		//mEngine.registerUpdateHandler(new GameLoopUpdateHandler());
 	}
 	
 	@Override

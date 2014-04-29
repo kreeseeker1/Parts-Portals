@@ -11,6 +11,8 @@ public class Monkey extends BaseEnemy {
 		super(pX, pY, vbo, camera, physicsWorld);
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 
 	@Override
 	public void onDie() {

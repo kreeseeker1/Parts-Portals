@@ -62,7 +62,9 @@ import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
 
 import com.tesc.sos2014.objects.Player;
+import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
+
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
@@ -71,6 +73,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	
 	
+	
+
 	private int life = 1000;
 
 	private HUD gameHUD;
@@ -119,10 +123,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean playerIsDead = false;
 
 	private boolean goingLeft = true, goingRight = false;
+	
+	
+	
+	public GameScene()
+	{
+		engine.registerUpdateHandler(new com.tesc.sos2014.managers.GameLoopUpdateHandler());
+	}
 
 	@Override
 	public void createScene()
 	{
+		
 		createBackground();
 		createHUD();
 		createPhysics();
@@ -131,13 +143,43 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		setOnSceneTouchListener(this);
 	}
 
-	
+	public void BulletInit()
+	{
+		 synchronized (this)
+		 {
+		Iterator it2 = bulletList.iterator();
+		
+		while(it2.hasNext())
+		{
+			Bullet b2 = (Bullet) it2.next();
+			
+			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+			final Vector2 speed = Vector2Pool.obtain(50,0);
+			
+			Body bb    = PhysicsFactory.createBoxBody(physicsWorld,  9f,9f,9f,9f,9f,  BodyType.DynamicBody, fd);
+			//bb = PhysicsFactory.createCircleBody(physicsWorld, b2.sprite, BodyType.DynamicBody, fd);
+			
+			
+			physicsWorld.registerPhysicsConnector(new PhysicsConnector(b2.sprite,bb,true,true));
+			
+			//bb.setLinearVelocity(speed);
+			bb.setUserData(b2.sprite.getUserData());
+			
+			bb.setLinearVelocity(new Vector2(5, bb.getLinearVelocity().y));
+		}
+			 
+		 
+		 }
+	}
 	public void cleaner() {
 	    synchronized (this) {
 	        Iterator it = bulletList.iterator();
 	        while (it.hasNext()) {
 	            Bullet b = (Bullet) it.next();
+	           
 	            if (b.sprite.getY() <= -b.sprite.getHeight()) {
+	            	 Log.v("Cleaner", "Bullet Removed.");
+	            	 Log.v("Children", "Number of Children" + this.getChildCount());
 	                BulletPool.sharedBulletPool().recyclePoolItem(b);
 	                it.remove();
 	                continue;
@@ -277,6 +319,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						health = new Health(x, y, getVbom(), camera, physicsWorld)
 						{
 							
+							
+							
 							@Override
 							protected void onManagedUpdate(float pSecondsElapsed)
 							{
@@ -332,6 +376,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						player = new Player(x, y, getVbom(), camera, physicsWorld)
 							{
 
+						
+							
 								@Override
 								public void onDie()
 								{
@@ -415,7 +461,26 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 										addToScore(-1);
 										
 									}
+									
+                                     Iterator it2 = bulletList.iterator();
+                                     
+                                     if(it2 != null)
+                                     {
+									
+									while(it2.hasNext())
+									{
+										Bullet b2 = (Bullet) it2.next();
+										if(b2.sprite.collidesWith(this))
+										{
+											this.onDie();
+										}
+									}
+                                     }
+									
+									
+									
 								}
+								
 
 					
 								private double getDiff(long oldTime, long newTime)
@@ -426,7 +491,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								@Override
 								public void onDie()
 								{
-									// TODO Auto-generated method stub
+									this.setVisible(false);
+									this.squish();
 
 								}
 							};
@@ -523,7 +589,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 					if (touchEvent.isActionDown())
 					{
-						player.shoot();
+						synchronized (this) {
+							player.shoot();
+						}
 					}
 					/*
 					 * else { player.stop(); }
@@ -536,6 +604,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.registerTouchArea(right);
 		gameHUD.registerTouchArea(fire);
 
+		
 		gameHUD.attachChild(left);
 		gameHUD.attachChild(right);
 		gameHUD.attachChild(fire);
@@ -572,6 +641,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		physicsWorld.setContactListener(contactListener());
 		registerUpdateHandler(physicsWorld);
 	}
+	
+	public  PhysicsWorld getPhysicsWorld()
+	{
+		return this.physicsWorld;
+	}
+
+	/*public static void setPhysicsWorld(PhysicsWorld physicsWorld)
+	{
+		GameScene.physicsWorld = physicsWorld;
+	}*/
 
 	// ---------------------------------------------
 	// INTERNAL CLASSES
@@ -649,5 +728,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				}
 			};
 		return contactListener;
+	}
+
+	public void attachChild(Body bulletBody)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

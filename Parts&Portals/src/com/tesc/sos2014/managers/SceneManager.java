@@ -5,6 +5,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
+import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.scenes.BaseScene;
 import com.tesc.sos2014.scenes.GameScene;
 import com.tesc.sos2014.scenes.LoadingScene;
@@ -112,6 +113,7 @@ public class SceneManager
             	ResourcesManager.getInstance().loadGameResources();
         		gameScene = new GameScene();
         		setScene(gameScene);//Launches scene
+        		MainGameEngineActivity.getSharedInstance().mCurrentScene = gameScene;
             }
 		}));
 	}
