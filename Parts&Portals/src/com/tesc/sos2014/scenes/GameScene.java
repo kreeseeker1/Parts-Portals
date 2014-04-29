@@ -134,13 +134,48 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
-		
+		BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
 		createBackground();
 		createHUD();
 		createPhysics();
 		loadLevel(1);
 		createGameOverText();
 		setOnSceneTouchListener(this);
+	}
+	
+	
+	public void attachBullet(Bullet b)
+	{
+		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
+		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		
+		Body bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
+		
+		bulletBody.setActive(true);
+		
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite,bulletBody,true,true));
+		//final Vector2 speed = Vector2Pool.obtain(50,0);
+		
+		//Vector2 negSpeed = speed;
+		
+		//negSpeed.x = negSpeed.x * -1;
+		//bulletBody.setLinearVelocity(speed);
+		
+		bulletBody.setLinearVelocity(new Vector2(-5, bulletBody.getLinearVelocity().y));
+		//Vector2Pool.recycle(speed);
+		
+		bulletBody.setUserData(ResourcesManager.getInstance().bullet.deepCopy());
+		bulletBody.setActive(true);
+	
+		
+	//	b.sprite.setX(player.getX());
+		
+		Log.v("Bullet Pos", "PLayerX: " +player.getX());
+		Log.v("Bullet Pos", "BulletX: " +b.sprite.getX());
+		
+		//b.sprite.setY(player.getY());
+		b.sprite.setSize(50f, 50f);
+		this.attachChild(b.sprite);
 	}
 
 	public void BulletInit()
@@ -153,7 +188,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		{
 			Bullet b2 = (Bullet) it2.next();
 			
-			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+			/*FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 			final Vector2 speed = Vector2Pool.obtain(50,0);
 			
 			Body bb    = PhysicsFactory.createBoxBody(physicsWorld,  9f,9f,9f,9f,9f,  BodyType.DynamicBody, fd);
@@ -165,7 +200,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			//bb.setLinearVelocity(speed);
 			bb.setUserData(b2.sprite.getUserData());
 			
-			bb.setLinearVelocity(new Vector2(5, bb.getLinearVelocity().y));
+			bb.setLinearVelocity(new Vector2(5, bb.getLinearVelocity().y));*/
 		}
 			 
 		 
@@ -470,7 +505,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									while(it2.hasNext())
 									{
 										Bullet b2 = (Bullet) it2.next();
-										if(b2.sprite.collidesWith(this))
+										if(this.collidesWith(b2.sprite))
 										{
 											this.onDie();
 										}
@@ -589,9 +624,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 					if (touchEvent.isActionDown())
 					{
-						synchronized (this) {
+						synchronized(this)
+						{
 							player.shoot();
 						}
+						
 					}
 					/*
 					 * else { player.stop(); }

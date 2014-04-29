@@ -30,8 +30,8 @@ public abstract class Player extends AnimatedSprite
 	// VARIABLES
 	// ---------------------------------------------
 
-	private Body body;
-	AnimatedSprite as =null;
+	public Body body;
+	public AnimatedSprite as =null;
 	
 	public static Player instance;
 
@@ -48,7 +48,7 @@ public abstract class Player extends AnimatedSprite
 
 	public Player(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
 		{
-			super(pX, pY, com.tesc.sos2014.managers.ResourcesManager.getInstance().player_region, vbo);
+			super(pX, pY, com.tesc.sos2014.managers.ResourcesManager.getInstance().player_region.deepCopy(), vbo);
 			createPhysics(camera, physicsWorld);
 			camera.setChaseEntity(this);
 		}
@@ -113,43 +113,38 @@ public abstract class Player extends AnimatedSprite
 	public void shoot()
 	{
 		Log.v("Player", "PLayer getting MainGameEngineActivity.getSharedInstance().mCurrentScene");
+		
+		
 		GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 		Log.v("Player", "PLayer got MainGameEngineActivity.getSharedInstance().mCurrentScene");
+	
+		
 		Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();
 		Log.v("Player", "Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();");
 
-		//FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 		
 		Log.v("Physics World", scene.getPhysicsWorld().toString());
 		
-		//Body bulletBody = PhysicsFactory.createBoxBody(scene.getPhysicsWorld(),  3f,3f,3f,3f,3f,  BodyType.DynamicBody, fd);
-		//bulletBody.setBullet(true);
-		//bulletBody.setUserData(b.sprite);
+		/*b.sprite.setY(this.getY());
+		b.sprite.setX(this.getX());
 		
-		//scene.getPhysicsWorld().registerPhysicsConnector(new PhysicsConnector( b.sprite, bulletBody, true, true));
-		//final Vector2 speed = Vector2Pool.obtain(50, 0);
-
-		b.sprite.setPosition(this.getX(),this.getY());
-		//bulletBody.setLinearVelocity(speed);
-		
-		
-		MoveXModifier mod = new MoveXModifier(1.5f,b.sprite.getX(),-b.sprite.getWidth());
-		//MoveYModifier mod2 = new MoveYModifier(1.5f, -b.sprite.getX(),b.sprite.getY());
-		
-		
-		
+	    
+*/		b.sprite.setPosition(this.getX() ,this.getY());
 		b.sprite.setVisible(true);
 		b.sprite.detachSelf();
 		
-		scene.attachChild(b.sprite);
-		
-	Log.v("Scene Children", "Num of Children " + scene.getChildCount());
+		scene.bulletCount++;
 		scene.bulletList.add(b);
+		scene.attachBullet(b);
 		
-	b.sprite.registerEntityModifier(mod);
+	//Log.v("Scene Children", "Num of Children " + scene.getChildCount());
+		
+		
+		
+	//b.sprite.registerEntityModifier(mod);
 	//b.sprite.registerEntityModifier(mod);
 
-		scene.bulletCount++;
+		
 
 	}
 

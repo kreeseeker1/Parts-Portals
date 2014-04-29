@@ -42,7 +42,7 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 	private boolean goLeft = false;
 
 	private int footContacts = 0;
-	 public int speed =5;
+	 public int speed =3;
 
 	// ---------------------------------------------
 	// CONSTRUCTOR
@@ -72,7 +72,7 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 
 	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld) 
 	{
-		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-5, 0, 0));
+		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-53, 0, 0));
 		//dynamic bodies can collide with each other and kinematic and static bodies
 
 		body.setUserData("enemy");    //Set the sprite image
@@ -156,6 +156,7 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 	public void squish()
 	{
 		body.setActive(false);
+		this.setIgnoreUpdate(true);
 	}
 	
 	public int setFootContactsZero()

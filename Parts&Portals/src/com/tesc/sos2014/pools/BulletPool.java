@@ -1,19 +1,10 @@
 package com.tesc.sos2014.pools;
 
-import org.andengine.extension.physics.box2d.PhysicsFactory;
-import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.util.adt.pool.GenericPool;
 
 import android.util.Log;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.objects.Bullet;
-import com.tesc.sos2014.partsportals.MainGameEngineActivity;
-import com.tesc.sos2014.scenes.GameScene;
 
 public class BulletPool  extends GenericPool<Bullet>
 {
@@ -30,11 +21,28 @@ public class BulletPool  extends GenericPool<Bullet>
 		return instance;
 	}
 	
+	@Override
+	public synchronized void batchAllocatePoolItems(int pCount)
+	{
+		// TODO Auto-generated method stub
+		super.batchAllocatePoolItems(pCount);
+	}
+
 	private BulletPool()
 	{
 		super();
 	}
 	
+	
+	
+	
+
+	@Override
+	public synchronized Bullet obtainPoolItem()
+	{
+		
+		return super.obtainPoolItem();
+	}
 
 	@Override
 	protected Bullet onAllocatePoolItem()
@@ -42,42 +50,21 @@ public class BulletPool  extends GenericPool<Bullet>
 		Log.v("Bullet", "BulletPool onAllocatePoolItem");
 		Bullet b = new Bullet();
 		
-       GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
+		b.sprite.setVisible(true);
+	
 		
-		
-		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		
-		
-		 Body bulletBody = PhysicsFactory.createCircleBody(scene.physicsWorld, b.sprite, BodyType.DynamicBody, fd);
-		bulletBody.setActive(true);
-		
-		
-		//scene.physicsWorld.registerPhysicsConnector(new PhysicsConnector(sprite,bulletBody,true,true));
-		final Vector2 speed = Vector2Pool.obtain(50,0);
-		
-		//bulletBody.setUserData(sprite.getTextureRegion());
-		
-		bulletBody.setLinearVelocity(speed);
-		Vector2Pool.recycle(speed);
-		
-		
-	//	bulletBody.setUserData(b.sprite);
-		bulletBody.setUserData(ResourcesManager.getInstance().bullet.deepCopy());
-		//b.bulletBody.setLinearVelocity(4, 5);
-		
-		
-		return  b;
+		return b;
 		
 	}
 	
 	protected void onHandleRecycleItem(final Bullet b)
 	{
-		/*Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getX());
+		Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getTag());
 		b.sprite.clearEntityModifiers();
 		b.sprite.clearUpdateHandlers();
 		b.sprite.setVisible(false);
 		b.sprite.detachSelf();
-		
+		/*
 		b.bulletBody.setLinearVelocity(0, 0);
 		b.bulletBody.setAngularVelocity(0);
 		b.bulletBody.setType(BodyType.StaticBody);
