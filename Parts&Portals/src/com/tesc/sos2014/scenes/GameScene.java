@@ -54,6 +54,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
@@ -148,7 +149,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		
+		b.sprite.setUserData(ResourcesManager.getInstance().bullet);
 		Body bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
 		
 		bulletBody.setActive(true);
@@ -164,7 +165,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		bulletBody.setLinearVelocity(new Vector2(-5, bulletBody.getLinearVelocity().y));
 		//Vector2Pool.recycle(speed);
 		
-		bulletBody.setUserData(ResourcesManager.getInstance().bullet.deepCopy());
+		bulletBody.setUserData(b.sprite);
 		bulletBody.setActive(true);
 	
 		
@@ -420,8 +421,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									{
 										displayGameOverText();
 									}
+									this.body.setActive(false);//removes body
+									this.setPosition(2000, 1000);//causes enemies to run to different part of screen
+									//this.detachSelf();  //This works I think by setting your x,y to 0,0
 								}
 							};
+							MassData data = new MassData();
+							data.mass = 2000f;
+						
+							player.body.setMassData(data);
 						levelObject = player;
 					}
 

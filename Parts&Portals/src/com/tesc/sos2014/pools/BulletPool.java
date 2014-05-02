@@ -59,11 +59,16 @@ public class BulletPool  extends GenericPool<Bullet>
 	
 	protected void onHandleRecycleItem(final Bullet b)
 	{
-		Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getTag());
+		
+		super.onHandleRecycleItem(b);
+		b.sprite.setVisible(false);
+		b.sprite.setIgnoreUpdate(true);
+		
+		/*Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getTag());
 		b.sprite.clearEntityModifiers();
 		b.sprite.clearUpdateHandlers();
 		b.sprite.setVisible(false);
-		b.sprite.detachSelf();
+		b.sprite.detachSelf();*/
 		/*
 		b.bulletBody.setLinearVelocity(0, 0);
 		b.bulletBody.setAngularVelocity(0);
