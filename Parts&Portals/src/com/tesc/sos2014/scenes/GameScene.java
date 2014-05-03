@@ -149,7 +149,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		b.sprite.setUserData(ResourcesManager.getInstance().bullet);
+		b.sprite = new Sprite(player.getX(), player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
 		Body bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
 		
 		bulletBody.setActive(true);
@@ -403,7 +403,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						levelObject = health; 
 						
 						
-						//this codes causes auto-scaling loop of the object
+						//following codes causes auto-scaling loop of the object
 						//levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
 					} 
 					
