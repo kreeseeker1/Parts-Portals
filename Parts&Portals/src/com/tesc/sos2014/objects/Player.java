@@ -144,12 +144,12 @@ public abstract class Player extends AnimatedSprite
 		return instance;
 	}
 
-	public boolean facingLeft()
+	public boolean isFacingLeft()
 	{
 		return left;
 	}
 
-	public boolean facingRight()
+	public boolean isFacingRight()
 	{
 		return right;
 	}

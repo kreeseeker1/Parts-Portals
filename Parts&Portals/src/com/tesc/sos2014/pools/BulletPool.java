@@ -10,8 +10,6 @@ public class BulletPool  extends GenericPool<Bullet>
 {
 	public static BulletPool instance;
 	
-	
-	
 	public static BulletPool sharedBulletPool()
 	{
 		if(instance == null)
@@ -24,7 +22,6 @@ public class BulletPool  extends GenericPool<Bullet>
 	@Override
 	public synchronized void batchAllocatePoolItems(int pCount)
 	{
-		// TODO Auto-generated method stub
 		super.batchAllocatePoolItems(pCount);
 	}
 
@@ -33,10 +30,6 @@ public class BulletPool  extends GenericPool<Bullet>
 		super();
 	}
 	
-	
-	
-	
-
 	@Override
 	public synchronized Bullet obtainPoolItem()
 	{
@@ -65,21 +58,6 @@ public class BulletPool  extends GenericPool<Bullet>
 		b.sprite.setIgnoreUpdate(true);
 		
 		b.bulletBody.setActive(false);
-		
-		
-		/*Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getTag());
-		b.sprite.clearEntityModifiers();
-		b.sprite.clearUpdateHandlers();
-		b.sprite.setVisible(false);
-		b.sprite.detachSelf();*/
-		/*
-		b.bulletBody.setLinearVelocity(0, 0);
-		b.bulletBody.setAngularVelocity(0);
-		b.bulletBody.setType(BodyType.StaticBody);
-		b.bulletBody.setActive(false);
-		b.bulletBody.setTransform(-5, -5, 0);*/
-		
-		
 		
 	}
 

@@ -37,7 +37,6 @@ import org.xml.sax.Attributes;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -55,7 +54,6 @@ import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
 import com.tesc.sos2014.pools.BulletPool;
 
-
 public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
 	long newTime = System.nanoTime();
@@ -64,10 +62,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private HUD gameHUD;
 	private Text scoreText;
 	public PhysicsWorld physicsWorld;
-	
-	private AnalogOnScreenControl stick;
 
-	// private LevelCompleteWindow levelCompleteWindow;
+	private AnalogOnScreenControl stick;
 
 	private static final String TAG_ENTITY = "entity";
 	private static final String TAG_ENTITY_ATTRIBUTE_X = "x";
@@ -91,30 +87,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private Player player;
 	private Monkey enemy;
-	private Health  health;
-	
+	private Health health;
 	public LinkedList<Bullet> bulletList = new LinkedList();
 	
-	
-	public int bulletCount =0;
-	
-	
-	private FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-
+	public int bulletCount = 0;
 	private Text gameOverText;
-	private boolean gameOverDisplayed = false;
 
+	private boolean gameOverDisplayed = false;
 	private boolean firstTouch = false;
 	private boolean playerIsDead = false;
-
 	private boolean goingLeft = true, goingRight = false;
-	
-	
-	
+
 	public GameScene()
-	{
-		engine.registerUpdateHandler(new com.tesc.sos2014.managers.GameLoopUpdateHandler());
-	}
+		{
+			engine.registerUpdateHandler(new com.tesc.sos2014.managers.GameLoopUpdateHandler());
+		}
 
 	@Override
 	public void createScene()
@@ -127,126 +114,72 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		createGameOverText();
 		setOnSceneTouchListener(this);
 	}
-	
-	
+
 	public void attachBullet(Bullet b)
 	{
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		if(player.facingLeft())
+		if (player.isFacingLeft())
 		{
-		b.sprite = new Sprite(player.getX() - 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
-		}
-		else if(player.facingRight())
+			b.sprite = new Sprite(player.getX() - 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
+		} else if (player.isFacingRight())
 		{
-			b.sprite = new Sprite(player.getX() +25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
+			b.sprite = new Sprite(player.getX() + 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
 		}
-		
+
 		b.setOldX(b.sprite.getX());
-		
-		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
-		
+		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld, b.sprite, BodyType.DynamicBody, fd);
 		b.bulletBody.setActive(true);
 		b.bulletLife = 100;
-		
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite,b.bulletBody,true,true));
-		//final Vector2 speed = Vector2Pool.obtain(50,0);
-		
-		//Vector2 negSpeed = speed;
-		
-		//negSpeed.x = negSpeed.x * -1;
-		//bulletBody.setLinearVelocity(speed);
-		//Vector2 playerLoc = new Vector2(player.getX(),player.getY()) ;
-		
-		
-		if(player.facingLeft())
+
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite, b.bulletBody, true, true));
+
+		if (player.isFacingLeft())
 		{
-			/*playerLoc.x = player.getX() - 10f;
-			playerLoc.y = player.getY();*/
-		//	b.sprite.setX(player.getX() - 400);
-			//b.bulletBody.setTransform(playerLoc, 0);
 			b.bulletBody.setLinearVelocity(50f, b.bulletBody.getLinearVelocity().y);
-			
-		}
-		else if(player.facingRight())
+		} else if (player.isFacingRight())
 		{
-			/*playerLoc.x = player.getX() + 10f;
-			playerLoc.y = player.getY();*/
-			//b.sprite.setX(player.getX() - 400);
-			//b.bulletBody.setTransform(playerLoc, 0);
 			b.bulletBody.setLinearVelocity(-50f, b.bulletBody.getLinearVelocity().y);
-			
 		}
-		
-		//Vector2Pool.recycle(speed);
-		
+
 		b.bulletBody.setUserData(b.sprite);
 		b.bulletBody.setActive(true);
-	
-		
-	//	b.sprite.setX(player.getX());
-		
-		Log.v("Bullet Pos", "PLayerX: " +player.getX());
-		Log.v("Bullet Pos", "BulletX: " +b.sprite.getX());
-		
-		//b.sprite.setY(player.getY());
+
+		Log.v("Bullet Pos", "PLayerX: " + player.getX());
+		Log.v("Bullet Pos", "BulletX: " + b.sprite.getX());
+
 		b.sprite.setSize(50f, 50f);
 		this.attachChild(b.sprite);
 	}
 
-	public void BulletInit()
+	public void cleaner()
 	{
-		 synchronized (this)
-		 {
-		Iterator it2 = bulletList.iterator();
-		
-		while(it2.hasNext())
+		synchronized (this)
 		{
-			Bullet b2 = (Bullet) it2.next();
-			
-			/*FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-			final Vector2 speed = Vector2Pool.obtain(50,0);
-			
-			Body bb    = PhysicsFactory.createBoxBody(physicsWorld,  9f,9f,9f,9f,9f,  BodyType.DynamicBody, fd);
-			//bb = PhysicsFactory.createCircleBody(physicsWorld, b2.sprite, BodyType.DynamicBody, fd);
-			
-			
-			physicsWorld.registerPhysicsConnector(new PhysicsConnector(b2.sprite,bb,true,true));
-			
-			//bb.setLinearVelocity(speed);
-			bb.setUserData(b2.sprite.getUserData());
-			
-			bb.setLinearVelocity(new Vector2(5, bb.getLinearVelocity().y));*/
+			Iterator<Bullet> it = bulletList.iterator();
+			while (it.hasNext())
+			{
+				Bullet b = (Bullet) it.next();
+
+				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite))																																																			// )
+				{
+					Log.v("Cleaner", "Bullet Removed.");
+					Log.v("Children", "Number of Children" + this.getChildCount());
+					BulletPool.sharedBulletPool().recyclePoolItem(b);
+					it.remove();
+					continue;
+				} else
+				{
+					b.bulletLife--;
+					b.setOldX(b.sprite.getX());
+				}
+			}
 		}
-			 
-		 
-		 }
 	}
-	public void cleaner() {
-	    synchronized (this) {
-	        Iterator<Bullet> it = bulletList.iterator();
-	        while (it.hasNext()) {
-	            Bullet b = (Bullet) it.next();
-	           
-	            if (b.bulletLife <=0 ||b.sprite.getY() <= -b.sprite.getHeight() ||  !camera.isEntityVisible(b.sprite))// || (b.sprite.getX() == b.getOldX()) )
-	            {
-	            	 Log.v("Cleaner", "Bullet Removed.");
-	            	 Log.v("Children", "Number of Children" + this.getChildCount());
-	                BulletPool.sharedBulletPool().recyclePoolItem(b);
-	                it.remove();
-	                continue;
-	            }
-	            else
-	            {
-	            	b.bulletLife --;
-	            	b.setOldX( b.sprite.getX());
-	            }
-	        }
-	    }
-	}
-	
-	public static GameScene getSharedInstance() {
-	    return instance;
+
+	public static GameScene getSharedInstance()
+	{
+		return instance;
 	}
 
 	@Override
@@ -265,7 +198,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public void disposeScene()
 	{
 		camera.setHUD(null);
-		camera.setChaseEntity(null); // TODO
+		camera.setChaseEntity(null);
 		camera.setCenter(400, 240);
 
 		// code responsible for disposing scene
@@ -286,7 +219,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				player.runLeft();
 				player.setFlippedHorizontal(true);
 			}
-
 			if (pSceneTouchEvent.getY() > player.getY())
 			{
 				player.jump();
@@ -308,8 +240,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 
-					camera.setBounds(0, 0, width, height); // here we set camera
-															// bounds
+					camera.setBounds(0, 0, width, height); // here we set camera bounds
 					camera.setBoundsEnabled(true);
 
 					return GameScene.this;
@@ -327,13 +258,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					final Sprite levelObject;
 
-					/*if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1))
-					{
-						levelObject = new Sprite(x, y, resourcesManager.platform1_region, vbom);
-						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platform1");
-					}*/
-
-					 if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATL))
+					
+					if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATL))
 					{
 						levelObject = new Sprite(x, y, resourcesManager.platformleft, getVbom());
 						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformleft");
@@ -372,69 +298,57 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					 */
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HEALTH))
 					{
-						
+
 						health = new Health(x, y, getVbom(), camera, physicsWorld)
-						{
-							
-							
-							
-							@Override
-							protected void onManagedUpdate(float pSecondsElapsed)
 							{
-								super.onManagedUpdate(pSecondsElapsed);
-								this.animateMe();
-								
-								
-								
-								if(player.collidesWith(this) || this.collidesWith(player))
+
+								@Override
+								protected void onManagedUpdate(float pSecondsElapsed)
 								{
-									this.setWidth(0);
-									this.setHeight(0);
-									addToScore(100);
-									this.setVisible(false);
-									this.squish();
-									
-									
-									this.setIgnoreUpdate(true);
-									this.clearEntityModifiers();
-									this.clearUpdateHandlers();
-									
-									int childCount = this.getParent().getChildCount();
-								
-									
-									Log.d("ChildCount :" + childCount, "Total Number of children");
-									
-									
+									super.onManagedUpdate(pSecondsElapsed);
+									this.animateMe();
+
+									if (player.collidesWith(this) || this.collidesWith(player))
+									{
+										this.setWidth(0);
+										this.setHeight(0);
+										addToScore(100);
+										this.setVisible(false);
+										this.squish();
+
+										this.setIgnoreUpdate(true);
+										this.clearEntityModifiers();
+										this.clearUpdateHandlers();
+
+										int childCount = this.getParent().getChildCount();
+
+										Log.d("ChildCount :" + childCount, "Total Number of children");
+
 									}
-								
-							}
 
-							
+								}
 
-							@Override
-							public void onDie()
-							{
-								// TODO Auto-generated method stub
-								
-							}
-						
-						};
-						
-						
-						levelObject = health; 
-						
-						
-						//following codes causes auto-scaling loop of the object
-						//levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
-					} 
-					
+								@Override
+								public void onDie()
+								{
+
+								}
+
+							};
+
+						levelObject = health;
+
+						// following codes causes auto-scaling loop of the
+						// object
+						// levelObject.registerEntityModifier(new
+						// LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
+					}
+
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER))
 					{
 						player = new Player(x, y, getVbom(), camera, physicsWorld)
 							{
 
-						
-							
 								@Override
 								public void onDie()
 								{
@@ -442,15 +356,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									{
 										displayGameOverText();
 									}
-									this.body.setActive(false);//removes body
-									this.setPosition(2000, 1000);//causes enemies to run to different part of screen
-									//this.detachSelf();  //This works I think by setting your x,y to 0,0
+									this.body.setActive(false);// removes body
+									this.setPosition(2000, 1000);// causes
+																	// enemies
+																	// to run to
+																	// different
+																	// part of
+																	// screen
+									// this.detachSelf(); //This works I think
+									// by setting your x,y to 0,0
 								}
 							};
-							MassData data = new MassData();
-							data.mass = 2000f;
-						
-							player.body.setMassData(data);
+						MassData data = new MassData();
+						data.mass = 2000f;
+
+						player.body.setMassData(data);
 						levelObject = player;
 					}
 
@@ -472,27 +392,25 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									newTime = System.nanoTime();
 
 									// float lastPos = this.getY();
-									if (getDiff(oldTime, newTime) > 1000000 && player.getY() > this.getY() + 5 )
+									if (getDiff(oldTime, newTime) > 1000000 && player.getY() > this.getY() + 5)
 									{
 										this.setFootContactsOne();
 										this.jump();
 										// this.setFootContactsZero();
 									}
-									
-									
-									//According to tutorial this following code should be checked in the cleaner method
-									/*if(bullet.collidesWith(this))
-									{
-										this.takeDamage(-50);
-										if(this.getLife() <= 0)
-										{
-											this.onDie();
-											this.setVisible(false);
-											this.setIgnoreUpdate(true);
-											this.squish();
-											
-										}
-									}*/
+
+									// According to tutorial this following code
+									// should be checked in the cleaner method
+									/*
+									 * if(bullet.collidesWith(this)) {
+									 * this.takeDamage(-50); if(this.getLife()
+									 * <= 0) { this.onDie();
+									 * this.setVisible(false);
+									 * this.setIgnoreUpdate(true);
+									 * this.squish();
+									 * 
+									 * } }
+									 */
 
 									if (life <= 0)
 									{
@@ -523,30 +441,26 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									if (player.collidesWith(this) || this.collidesWith(player))
 									{
 										addToScore(-1);
-										
+
 									}
-									
-                                     Iterator it2 = bulletList.iterator();
-                                     
-                                     if(it2 != null)
-                                     {
-									
-									while(it2.hasNext())
+
+									Iterator<Bullet> it2 = bulletList.iterator();
+
+									if (it2 != null)
 									{
-										Bullet b2 = (Bullet) it2.next();
-										if(this.collidesWith(b2.sprite))
+
+										while (it2.hasNext())
 										{
-											this.onDie();
+											Bullet b2 = (Bullet) it2.next();
+											if (this.collidesWith(b2.sprite))
+											{
+												this.onDie();
+											}
 										}
 									}
-                                     }
-									
-									
-									
-								}
-								
 
-					
+								}
+
 								private double getDiff(long oldTime, long newTime)
 								{
 									return newTime - oldTime;
@@ -616,53 +530,38 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
 		scoreText.setAnchorCenter(0, 0);
 		scoreText.setText("Score: 100");
-		
-		
-		
-		stick = new AnalogOnScreenControl(75f, camera.getHeight()-300, camera, ResourcesManager.getInstance().control_base_region.deepCopy(), ResourcesManager.getInstance().bullet.deepCopy(), .1f,  getVbom(), new IAnalogOnScreenControlListener()
-		{
 
-			@Override
-			public void onControlChange(BaseOnScreenControl pBaseOnScreenControl, float pValueX, float pValueY)
+		stick = new AnalogOnScreenControl(75f, camera.getHeight() - 300, camera, ResourcesManager.getInstance().control_base_region.deepCopy(), ResourcesManager.getInstance().bullet.deepCopy(), .1f, getVbom(), new IAnalogOnScreenControlListener()
 			{
-				if(pValueX == -1)
-				{
-					player.runLeft();
-				}
-				if(pValueX == 1)
-				{
-					player.runRight();
-				}
-				else
-				{
-					player.stop();
-				}
-				
-			}
 
-			@Override
-			public void onControlClick(AnalogOnScreenControl pAnalogOnScreenControl)
-			{
-				//player.shoot();
-				
-			}
+				@Override
+				public void onControlChange(BaseOnScreenControl pBaseOnScreenControl, float pValueX, float pValueY)
+				{
+					if (pValueX == -1)
+					{
+						player.runLeft();
+					}
+					if (pValueX == 1)
+					{
+						player.runRight();
+					} else
+					{
+						player.stop();
+					}
 
-			
-		
-		});
-		
+				}
+
+				@Override
+				public void onControlClick(AnalogOnScreenControl pAnalogOnScreenControl)
+				{
+					// player.shoot();
+
+				}
+
+			});
+
 		stick.getControlBase().setAlpha(0.5f);
-        stick.getControlKnob().setAlpha(0.5f);
-		
-		
-		
-	
-		
-		
-		
-		
-		
-		
+		stick.getControlKnob().setAlpha(0.5f);
 
 		final Rectangle left = new Rectangle(20, 90, 60, 60, getVbom())
 			{
@@ -671,8 +570,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					if (touchEvent.isActionDown())
 					{
 						player.runLeft();
-						//fire(player);
-						
+						// fire(player);
+
 					}
 
 					return true;
@@ -693,18 +592,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					return true;
 				};
 			};
-			
-			final Rectangle fire = new Rectangle(camera.getWidth() - 60, 180, 60, 60, getVbom())
+
+		final Rectangle fire = new Rectangle(camera.getWidth() - 60, 180, 60, 60, getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
 					if (touchEvent.isActionDown())
 					{
-						synchronized(this)
+						synchronized (this)
 						{
 							player.shoot();
 						}
-						
+
 					}
 					/*
 					 * else { player.stop(); }
@@ -716,10 +615,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.registerTouchArea(left);
 		gameHUD.registerTouchArea(right);
 		gameHUD.registerTouchArea(fire);
-		
-	//	gameHUD.registerTouchArea(stick);
-	//	gameHUD.attachChild(stick);
-		
+
+		// gameHUD.registerTouchArea(stick);
+		// gameHUD.attachChild(stick);
+
 		gameHUD.attachChild(left);
 		gameHUD.attachChild(right);
 		gameHUD.attachChild(fire);
@@ -756,16 +655,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		physicsWorld.setContactListener(contactListener());
 		registerUpdateHandler(physicsWorld);
 	}
-	
-	public  PhysicsWorld getPhysicsWorld()
+
+	public PhysicsWorld getPhysicsWorld()
 	{
 		return this.physicsWorld;
 	}
 
-	/*public static void setPhysicsWorld(PhysicsWorld physicsWorld)
-	{
-		GameScene.physicsWorld = physicsWorld;
-	}*/
+	/*
+	 * public static void setPhysicsWorld(PhysicsWorld physicsWorld) {
+	 * GameScene.physicsWorld = physicsWorld; }
+	 */
 
 	// ---------------------------------------------
 	// INTERNAL CLASSES
@@ -843,11 +742,5 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				}
 			};
 		return contactListener;
-	}
-
-	public void attachChild(Body bulletBody)
-	{
-		// TODO Auto-generated method stub
-		
 	}
 }
