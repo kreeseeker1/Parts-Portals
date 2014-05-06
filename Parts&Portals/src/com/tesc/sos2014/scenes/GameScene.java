@@ -1,17 +1,13 @@
 package com.tesc.sos2014.scenes;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
+import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
-import org.andengine.engine.camera.hud.controls.DigitalOnScreenControl;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
@@ -21,7 +17,6 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -29,7 +24,6 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
@@ -40,14 +34,11 @@ import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
 import org.xml.sax.Attributes;
 
-import android.net.wifi.p2p.WifiP2pManager.ActionListener;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -61,9 +52,7 @@ import com.tesc.sos2014.managers.SceneManager.SceneType;
 import com.tesc.sos2014.objects.Bullet;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
-
 import com.tesc.sos2014.objects.Player;
-import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
 
 
@@ -81,6 +70,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private HUD gameHUD;
 	private Text scoreText;
 	public PhysicsWorld physicsWorld;
+	
+	private AnalogOnScreenControl stick;
 	
 
 	// private LevelCompleteWindow levelCompleteWindow;
@@ -149,24 +140,55 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-		b.sprite = new Sprite(player.getX(), player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
-		Body bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
+		if(player.facingLeft())
+		{
+		b.sprite = new Sprite(player.getX() - 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
+		}
+		else if(player.facingRight())
+		{
+			b.sprite = new Sprite(player.getX() +25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());//.setUserData(ResourcesManager.getInstance().bullet);
+		}
 		
-		bulletBody.setActive(true);
+		b.setOldX(b.sprite.getX());
 		
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite,bulletBody,true,true));
+		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld,  b.sprite, BodyType.DynamicBody, fd);
+		
+		b.bulletBody.setActive(true);
+		b.bulletLife = 100;
+		
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite,b.bulletBody,true,true));
 		//final Vector2 speed = Vector2Pool.obtain(50,0);
 		
 		//Vector2 negSpeed = speed;
 		
 		//negSpeed.x = negSpeed.x * -1;
 		//bulletBody.setLinearVelocity(speed);
+		//Vector2 playerLoc = new Vector2(player.getX(),player.getY()) ;
 		
-		bulletBody.setLinearVelocity(new Vector2(-5, bulletBody.getLinearVelocity().y));
+		
+		if(player.facingLeft())
+		{
+			/*playerLoc.x = player.getX() - 10f;
+			playerLoc.y = player.getY();*/
+		//	b.sprite.setX(player.getX() - 400);
+			//b.bulletBody.setTransform(playerLoc, 0);
+			b.bulletBody.setLinearVelocity(50f, b.bulletBody.getLinearVelocity().y);
+			
+		}
+		else if(player.facingRight())
+		{
+			/*playerLoc.x = player.getX() + 10f;
+			playerLoc.y = player.getY();*/
+			//b.sprite.setX(player.getX() - 400);
+			//b.bulletBody.setTransform(playerLoc, 0);
+			b.bulletBody.setLinearVelocity(-50f, b.bulletBody.getLinearVelocity().y);
+			
+		}
+		
 		//Vector2Pool.recycle(speed);
 		
-		bulletBody.setUserData(b.sprite);
-		bulletBody.setActive(true);
+		b.bulletBody.setUserData(b.sprite);
+		b.bulletBody.setActive(true);
 	
 		
 	//	b.sprite.setX(player.getX());
@@ -213,12 +235,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	        while (it.hasNext()) {
 	            Bullet b = (Bullet) it.next();
 	           
-	            if (b.sprite.getY() <= -b.sprite.getHeight()) {
+	            if (b.bulletLife <=0 ||b.sprite.getY() <= -b.sprite.getHeight() ||  !camera.isEntityVisible(b.sprite))// || (b.sprite.getX() == b.getOldX()) )
+	            {
 	            	 Log.v("Cleaner", "Bullet Removed.");
 	            	 Log.v("Children", "Number of Children" + this.getChildCount());
 	                BulletPool.sharedBulletPool().recyclePoolItem(b);
 	                it.remove();
 	                continue;
+	            }
+	            else
+	            {
+	            	b.bulletLife --;
+	            	b.setOldX( b.sprite.getX());
 	            }
 	        }
 	    }
@@ -595,6 +623,53 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
 		scoreText.setAnchorCenter(0, 0);
 		scoreText.setText("Score: 100");
+		
+		
+		
+		stick = new AnalogOnScreenControl(75f, camera.getHeight()-300, camera, ResourcesManager.getInstance().control_base_region.deepCopy(), ResourcesManager.getInstance().bullet.deepCopy(), .1f,  getVbom(), new IAnalogOnScreenControlListener()
+		{
+
+			@Override
+			public void onControlChange(BaseOnScreenControl pBaseOnScreenControl, float pValueX, float pValueY)
+			{
+				if(pValueX == -1)
+				{
+					player.runLeft();
+				}
+				if(pValueX == 1)
+				{
+					player.runRight();
+				}
+				else
+				{
+					player.stop();
+				}
+				
+			}
+
+			@Override
+			public void onControlClick(AnalogOnScreenControl pAnalogOnScreenControl)
+			{
+				//player.shoot();
+				
+			}
+
+			
+		
+		});
+		
+		stick.getControlBase().setAlpha(0.5f);
+        stick.getControlKnob().setAlpha(0.5f);
+		
+		
+		
+	
+		
+		
+		
+		
+		
+		
 
 		final Rectangle left = new Rectangle(20, 90, 60, 60, getVbom())
 			{
@@ -648,7 +723,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.registerTouchArea(left);
 		gameHUD.registerTouchArea(right);
 		gameHUD.registerTouchArea(fire);
-
+		
+	//	gameHUD.registerTouchArea(stick);
+	//	gameHUD.attachChild(stick);
 		
 		gameHUD.attachChild(left);
 		gameHUD.attachChild(right);

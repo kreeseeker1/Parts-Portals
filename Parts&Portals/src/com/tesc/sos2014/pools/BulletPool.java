@@ -64,6 +64,9 @@ public class BulletPool  extends GenericPool<Bullet>
 		b.sprite.setVisible(false);
 		b.sprite.setIgnoreUpdate(true);
 		
+		b.bulletBody.setActive(false);
+		
+		
 		/*Log.v("Bullet Pool", "Bullet recycled" + b.sprite.getTag());
 		b.sprite.clearEntityModifiers();
 		b.sprite.clearUpdateHandlers();
