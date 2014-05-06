@@ -7,7 +7,8 @@ import android.util.Log;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.scenes.GameScene;
 
-public class GameLoopUpdateHandler implements IUpdateHandler{
+public class GameLoopUpdateHandler implements IUpdateHandler
+{
 
 	public GameLoopUpdateHandler()
 	{
@@ -17,7 +18,7 @@ public class GameLoopUpdateHandler implements IUpdateHandler{
 	@Override
 	public void onUpdate(float pSecondsElapsed) {
 		
-		GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
+		//GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 		//Log.v("Cleaner Called", "Cleaner is getting called from GameLoopUpdateHandler. Number of children: " + scene.getChildCount() );
 		((GameScene)MainGameEngineActivity.getSharedInstance().mCurrentScene).cleaner();
 		//((GameScene)MainGameEngineActivity.getSharedInstance().mCurrentScene).BulletInit();

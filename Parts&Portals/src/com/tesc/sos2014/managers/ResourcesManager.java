@@ -33,6 +33,9 @@ public class ResourcesManager
 	
 	private static final ResourcesManager INSTANCE = new ResourcesManager();
 	
+	private BitmapTextureAtlas splashTextureAtlas;
+	private BuildableBitmapTextureAtlas menuTextureAtlas;
+	
 	public Engine engine;
 	public MainGameEngineActivity activity;
 	public BoundCamera camera;
@@ -49,6 +52,8 @@ public class ResourcesManager
 	public ITextureRegion play_region;
 	public ITextureRegion options_region;
 	public ITextureRegion control_base_region;
+	
+	ITexture mainFontTexture = null;
 	
 	// Game Texture
 	public BuildableBitmapTextureAtlas gameTextureAtlas;
@@ -74,8 +79,7 @@ public class ResourcesManager
 	public ITiledTextureRegion enemy;
 	public ITiledTextureRegion enemyl;
 	
-	private BitmapTextureAtlas splashTextureAtlas;
-	private BuildableBitmapTextureAtlas menuTextureAtlas;
+	
 	
 	// Level Complete Window
 	public ITextureRegion complete_window_region;
@@ -131,7 +135,7 @@ public class ResourcesManager
 	{
 		//menu font loader
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
 		font.load();

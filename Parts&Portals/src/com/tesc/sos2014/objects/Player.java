@@ -114,6 +114,10 @@ public abstract class Player extends AnimatedSprite
 		right = false;
 		left = true;
 		stop = false;
+		
+		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100, 100 };
+
+		animate(PLAYER_ANIMATE, 0, 6, true);
 
 	}
 
@@ -160,8 +164,6 @@ public abstract class Player extends AnimatedSprite
 		left = false;
 		stop = true;
 	}
-
-	
 
 	public void jump()
 	{
