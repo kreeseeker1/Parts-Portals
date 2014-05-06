@@ -20,29 +20,15 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 
 	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	private Body body;
-	
-	int life = 100;
-
-	public int getLife()
-	{
-		return life;
-	}
-
-	public void setLife(int life)
-	{
-		this.life = life;
-	}
-	
-	public void takeDamage(int dmg)
-	{
-		this.life += dmg;
-	}
-
+	private int life = 100;
 	private boolean goRight = false;
 	private boolean goLeft = false;
-
 	private int footContacts = 0;
-	 public int speed =3;
+	public int speed =3;
+
+	
+
+	
 
 	// ---------------------------------------------
 	// CONSTRUCTOR
@@ -60,6 +46,20 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 		
 		//camera.setChaseEntity(this);
 
+	}
+	public int getLife()
+	{
+		return life;
+	}
+
+	public void setLife(int life)
+	{
+		this.life = life;
+	}
+	
+	public void takeDamage(int dmg)
+	{
+		this.life += dmg;
 	}
 	
 	/*public BaseEnemy(){
@@ -121,13 +121,7 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 		//super.onUpdate(pSecondsElapsed);
 	//	animate(ENEMY_ANIMATE, 0, 2, true);
 	}
-
-	public void animateMe() {
-		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
-		//animate(ENEMY_ANIMATE, 0, 2, true);
-	}//
-
+	
 	public void runLeft() {
 		goRight = false;
 		goLeft = true;
@@ -135,6 +129,14 @@ public abstract class BaseEnemy extends AnimatedSprite  {
 	//	animate(ENEMY_ANIMATE, 0, 2, true);
 
 	}
+
+	public void animateMe() {
+		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
+		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		//animate(ENEMY_ANIMATE, 0, 2, true);
+	}//
+
+	
 
 	public int getSpeed() {
 		return speed;

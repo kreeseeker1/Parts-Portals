@@ -9,7 +9,17 @@ import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 
 public class Bullet 
 {
+	public Sprite sprite;
+	public Body bulletBody;
+	public int bulletLife = 100;
 	public float oldX = 0;
+	
+	public Bullet()
+	{
+		sprite = new Sprite(0,0,ResourcesManager.getInstance().bullet.deepCopy(),MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+		sprite.setVisible(true);
+	}
+	
 	public float getOldX()
 	{
 		return oldX;
@@ -19,16 +29,4 @@ public class Bullet
 	{
 		this.oldX = oldX;
 	}
-
-	public Sprite sprite;
-	public Body bulletBody;
-	public int bulletLife = 100;
-	
-	public Bullet()
-	{
-		
-		sprite = new Sprite(0,0,ResourcesManager.getInstance().bullet.deepCopy(),MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
-		sprite.setVisible(true);
-	}
-
 }

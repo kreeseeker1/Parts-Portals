@@ -20,16 +20,6 @@ public abstract class Health extends AnimatedSprite {
 
 	final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
 	private Body body;
-	
-	
-	
-
-	private boolean goRight = false;
-	private boolean goLeft = false;
-
-	private int footContacts = 0;
-	 public int speed =5;
-
 	// ---------------------------------------------
 	// CONSTRUCTOR
 	// ---------------------------------------------
@@ -68,97 +58,21 @@ public abstract class Health extends AnimatedSprite {
 			{
 				
 				super.onUpdate(pSecondsElapsed);//This is very important to be in this exact spot
-				//camera.onUpdate(0.1f);
-
-				/*if (getY() <= 0) //Body falls below bottom of scene
-				{
-					onDie();
-				}
-
-				if (goRight) 
-				{
-					//super.onUpdate(pSecondsElapsed);
-					body.setLinearVelocity(new Vector2(speed, body.getLinearVelocity().y));//with the speed of 3 move right
-					//I think that this is where we could add code to get the character to face the right direction
-					//animate(ENEMY_ANIMATE, 0, 2,true);
-				}
-				if (goLeft) 
-				{
-					//super.onUpdate(pSecondsElapsed);
-					body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));//with the speed f 3 move left
-					//I think that this is where we could add code to get the character to face the right direction
-					//animate(ENEMY_ANIMATE, 0, 2, true);
-				}*/
+				
 			}
 		});
 	}
 
-	public void runRight() {
-		goRight = true;
-		goLeft =false;
-		final long[] HEALTH_ANIMATE = new long[] { 100, 100, 100 };
-		//animate(ENEMY_ANIMATE, 0, 2, true);
-
-		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
-		//super.onUpdate(pSecondsElapsed);
-	//	animate(ENEMY_ANIMATE, 0, 2, true);
-	}
 
 	public void animateMe() {
-		//final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100 };
+		
 		final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
-		//animate(ENEMY_ANIMATE, 0, 2, true);
+		
 	}//
-
-	public void runLeft() {
-		goRight = false;
-		goLeft = true;
-		final long[] HEALTH_ANIMATE = new long[] { 100, 100 };
-	//	animate(ENEMY_ANIMATE, 0, 2, true);
-
-	}
-
-	public int getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(int speed) {
-		this.speed = speed;
-	}
 	
 	public void squish()
 	{
 		body.setActive(false);
-	}
-
-	public void jump()
-	{
-		if (footContacts < 1) 
-		{
-			return; 
-		}
-		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10)); 
-	}
-	
-	public int setFootContactsZero()
-	{
-		footContacts = 0;
-		return footContacts;
-	}
-	
-	public int setFootContactsOne()
-	{
-		footContacts = 1;
-		return footContacts;
-	}
-	
-
-	public void increaseFootContacts() {
-		footContacts++;
-	}
-
-	public void decreaseFootContacts() {
-		footContacts--;
 	}
 
 	public abstract void onDie();

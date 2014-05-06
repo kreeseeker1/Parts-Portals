@@ -60,19 +60,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
 	long newTime = System.nanoTime();
 	long oldTime;
-
-	
-	
-	
-
 	private int life = 1000;
-
 	private HUD gameHUD;
 	private Text scoreText;
 	public PhysicsWorld physicsWorld;
 	
 	private AnalogOnScreenControl stick;
-	
 
 	// private LevelCompleteWindow levelCompleteWindow;
 
@@ -231,7 +224,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	}
 	public void cleaner() {
 	    synchronized (this) {
-	        Iterator it = bulletList.iterator();
+	        Iterator<Bullet> it = bulletList.iterator();
 	        while (it.hasNext()) {
 	            Bullet b = (Bullet) it.next();
 	           

@@ -30,16 +30,16 @@ public abstract class Player extends AnimatedSprite
 	// VARIABLES
 	// ---------------------------------------------
 
-	public Body body;
-	public AnimatedSprite as =null;
 	
-	public static Player instance;
-
 	private boolean right = false;
 	private boolean left = false;
 	private boolean stop = false;
-
 	private int footContacts = 0;
+	
+	public Body body;
+	public AnimatedSprite as =null;
+	public static Player instance;
+
 
 
 	// ---------------------------------------------
@@ -100,7 +100,6 @@ public abstract class Player extends AnimatedSprite
 
 	public void runRight()
 	{
-		//BulletPool.sharedBulletPool().
 		right = true;
 		left = false;
 		stop = false;
@@ -109,42 +108,33 @@ public abstract class Player extends AnimatedSprite
 
 		animate(PLAYER_ANIMATE, 0, 6, true);
 	}
+	
+	public void runLeft()
+	{
+		right = false;
+		left = true;
+		stop = false;
+
+	}
 
 	public void shoot()
 	{
 		Log.v("Player", "PLayer getting MainGameEngineActivity.getSharedInstance().mCurrentScene");
-		
-		
+			
 		GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 		Log.v("Player", "PLayer got MainGameEngineActivity.getSharedInstance().mCurrentScene");
 	
-		
 		Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();
 		Log.v("Player", "Bullet b = BulletPool.sharedBulletPool().obtainPoolItem();");
-
-		
 		Log.v("Physics World", scene.getPhysicsWorld().toString());
 		
-		/*b.sprite.setY(this.getY());
-		b.sprite.setX(this.getX());
-		
-	    
-*/		b.sprite.setPosition(this.getX() ,this.getY());
+		b.sprite.setPosition(this.getX() ,this.getY());
 		b.sprite.setVisible(true);
 		b.sprite.detachSelf();
 		
 		scene.bulletCount++;
 		scene.bulletList.add(b);
-		scene.attachBullet(b);
-		
-	//Log.v("Scene Children", "Num of Children " + scene.getChildCount());
-		
-		
-		
-	//b.sprite.registerEntityModifier(mod);
-	//b.sprite.registerEntityModifier(mod);
-
-		
+		scene.attachBullet(b);	
 
 	}
 
@@ -153,33 +143,6 @@ public abstract class Player extends AnimatedSprite
 		
 		return instance;
 	}
-
-	/*
-	 * public Body fireGun(Scene s) { float x = this.getX(); float y =
-	 * this.getY();
-	 * 
-	 * Body b = null;
-	 * 
-	 * b.setBullet(true);
-	 * 
-	 * b.setActive(true);
-	 * 
-	 * 
-	 * //CircleShape bullet = null;
-	 * 
-	 * Vector2 v = new Vector2(x,y); bullet.setRadius(4l);
-	 * bullet.setPosition(v);
-	 * 
-	 * //s.attachChild((b);
-	 * 
-	 * if(facingLeft()) { b.setLinearVelocity(-3, 0);
-	 * 
-	 * } else if(facingRight()) {
-	 * 
-	 * return b;}
-	 */
-
-	// }
 
 	public boolean facingLeft()
 	{
@@ -198,13 +161,7 @@ public abstract class Player extends AnimatedSprite
 		stop = true;
 	}
 
-	public void runLeft()
-	{
-		right = false;
-		left = true;
-		stop = false;
-
-	}
+	
 
 	public void jump()
 	{

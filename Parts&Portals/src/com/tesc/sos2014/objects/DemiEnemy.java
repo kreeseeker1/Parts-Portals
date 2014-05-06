@@ -17,8 +17,21 @@ public abstract class DemiEnemy
 
 	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	private Body body;
+	private boolean goRight = false;
+	private boolean goLeft = false;
+	private int footContacts = 0;
+	private int life = 100;
+	public int speed = 3;
+	public AnimatedSprite aSprite;
 
-	int life = 100;
+
+	public DemiEnemy()
+		{
+
+			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy, MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			aSprite.setSize(50, 45);
+			aSprite.animate(ENEMY_ANIMATE);
+		}
 
 	public int getLife()
 	{
@@ -35,26 +48,6 @@ public abstract class DemiEnemy
 		this.life += dmg;
 	}
 
-	private boolean goRight = false;
-	private boolean goLeft = false;
-
-	private int footContacts = 0;
-	public int speed = 3;
-
-	AnimatedSprite aSprite;
-
-	public DemiEnemy()
-		{
-
-			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy, MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
-			aSprite.setSize(50, 45);
-			aSprite.animate(ENEMY_ANIMATE);
-		}
-
-	public void dostuff()
-	{
-
-	}
 
 	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
 	{
@@ -120,11 +113,6 @@ public abstract class DemiEnemy
 
 	}
 
-	public void animateMe()
-	{
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
-	}
-
 	public void runLeft()
 	{
 		goRight = false;
@@ -132,6 +120,11 @@ public abstract class DemiEnemy
 		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 		// animate(ENEMY_ANIMATE, 0, 2, true);
 
+	}
+	
+	public void animateMe()
+	{
+		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	}
 
 	public int getSpeed()
