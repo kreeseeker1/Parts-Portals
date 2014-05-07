@@ -13,6 +13,7 @@ public class Bullet
 	public Body bulletBody;
 	public int bulletLife = 100;
 	public float oldX = 0;
+	public float newX = 0;
 	
 	public Bullet()
 	{
@@ -28,5 +29,15 @@ public class Bullet
 	public void setOldX(float oldX)
 	{
 		this.oldX = oldX;
+	}
+
+	public float getNewX()
+	{
+		return newX;
+	}
+
+	public void setNewX(float newX)
+	{
+		this.newX = newX;
 	}
 }

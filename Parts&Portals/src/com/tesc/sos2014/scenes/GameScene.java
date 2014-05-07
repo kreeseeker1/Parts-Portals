@@ -49,6 +49,7 @@ import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
 import com.tesc.sos2014.objects.Bullet;
+import com.tesc.sos2014.objects.DemiEnemy;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
@@ -127,7 +128,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			b.sprite = new Sprite(player.getX() + 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
 		}
 
-		b.setOldX(b.sprite.getX());
+		b.setOldX(b.getNewX());
+		b.setNewX(b.sprite.getX());
+		
 		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld, b.sprite, BodyType.DynamicBody, fd);
 		b.bulletBody.setActive(true);
 		b.bulletLife = 100;
@@ -151,6 +154,41 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		b.sprite.setSize(50f, 50f);
 		this.attachChild(b.sprite);
 	}
+	
+	public void attachEnemy(final DemiEnemy de)
+	{
+		
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false)
+		{
+			@Override
+			public void onUpdate(float pSecondsElapsed)
+			{
+
+				super.onUpdate(pSecondsElapsed);// This is very important to
+												// be in this exact spot
+				// camera.onUpdate(0.1f);
+
+				if (de.aSprite.getY() <= 0) // Body falls below bottom of scene
+				{
+					de.onDie();
+				}
+
+				if (de.isGoRight())
+				{
+					// super.onUpdate(pSecondsElapsed);
+					de.body.setLinearVelocity(new Vector2(3, de.body.getLinearVelocity().y));
+																							
+				}
+				if (de.isGoLeft())
+				{
+					// super.onUpdate(pSecondsElapsed);
+					de.body.setLinearVelocity(new Vector2(-3, de.body.getLinearVelocity().y));
+				}
+			}
+		});
+}
+		
+
 
 	public void cleaner()
 	{
@@ -160,18 +198,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			while (it.hasNext())
 			{
 				Bullet b = (Bullet) it.next();
+				
+				b.setNewX(b.sprite.getX());
 
-				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite))																																																			// )
+				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite) ||(b.getOldX() == b.getNewX()) )																																																			// )
 				{
 					Log.v("Cleaner", "Bullet Removed.");
 					Log.v("Children", "Number of Children" + this.getChildCount());
+					
 					BulletPool.sharedBulletPool().recyclePoolItem(b);
 					it.remove();
 					continue;
 				} else
 				{
 					b.bulletLife--;
-					b.setOldX(b.sprite.getX());
+					b.setOldX(b.getNewX());
+					b.setNewX(b.sprite.getX());
 				}
 			}
 		}

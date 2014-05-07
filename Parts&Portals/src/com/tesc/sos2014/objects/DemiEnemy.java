@@ -12,11 +12,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 
-public abstract class DemiEnemy
+public class DemiEnemy
 {
 
 	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
-	private Body body;
+	public Body body;
 	private boolean goRight = false;
 	private boolean goLeft = false;
 	private int footContacts = 0;
@@ -57,8 +57,8 @@ public abstract class DemiEnemy
 
 		body.setUserData("enemy"); // Set the sprite image
 		body.setFixedRotation(false); // wont tumble I assume
-
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(aSprite, body, true, false)
+	}
+		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(aSprite, body, true, false)
 			{
 				@Override
 				public void onUpdate(float pSecondsElapsed)
@@ -103,7 +103,7 @@ public abstract class DemiEnemy
 					}
 				}
 			});
-	}
+	}*/
 
 	public void runRight()
 	{
@@ -152,6 +152,26 @@ public abstract class DemiEnemy
 		aSprite.setIgnoreUpdate(true);
 	}
 
+	public boolean isGoRight()
+	{
+		return goRight;
+	}
+
+	public void setGoRight(boolean goRight)
+	{
+		this.goRight = goRight;
+	}
+
+	public boolean isGoLeft()
+	{
+		return goLeft;
+	}
+
+	public void setGoLeft(boolean goLeft)
+	{
+		this.goLeft = goLeft;
+	}
+
 	public int setFootContactsZero()
 	{
 		footContacts = 0;
@@ -174,5 +194,5 @@ public abstract class DemiEnemy
 		footContacts--;
 	}
 
-	public abstract void onDie();
+	
 }
