@@ -53,7 +53,9 @@ import com.tesc.sos2014.objects.DemiEnemy;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
+import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
+import com.tesc.sos2014.pools.DemiEnemyPool;
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
@@ -87,9 +89,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static GameScene instance;
 	
 	private Player player;
+	private DemiEnemy DE;
 	private Monkey enemy;
 	private Health health;
-	public LinkedList<Bullet> bulletList = new LinkedList();
+	public LinkedList<Bullet> bulletList = new LinkedList<Bullet>();
+	public LinkedList<DemiEnemy> DEList ;
+	//public LinkedList<DemiEnemy>demiEnemyList = new LinkedList();
+	
+	
 	
 	public int bulletCount = 0;
 	private Text gameOverText;
@@ -98,6 +105,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean firstTouch = false;
 	private boolean playerIsDead = false;
 	private boolean goingLeft = true, goingRight = false;
+	public int demiEnemyCount = 0;
+	
 
 	public GameScene()
 		{
@@ -107,13 +116,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
-		BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
+		//BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
+		Log.v("CreateScene", "CreateScene Started");
+		DEList = new LinkedList<DemiEnemy>();
+		//Log.v("CreateScene", "dDemi Enemy List Size" + demiEnemyList.size());
 		createBackground();
 		createHUD();
 		createPhysics();
 		loadLevel(1);
 		createGameOverText();
 		setOnSceneTouchListener(this);
+		//demiEnemyList.add(new DemiEnemy());
 	}
 
 	public void attachBullet(Bullet b)
@@ -151,26 +164,50 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		Log.v("Bullet Pos", "PLayerX: " + player.getX());
 		Log.v("Bullet Pos", "BulletX: " + b.sprite.getX());
 
-		b.sprite.setSize(50f, 50f);
+		b.sprite.setSize(10f, 10f);
 		this.attachChild(b.sprite);
 	}
 	
-	public void attachEnemy(final DemiEnemy de)
+	public void attachDemiEnemy(DemiEnemy de)
 	{
+		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
+		de.body.setActive(true);
 		
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false)
+		
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false));
+		
+		de.body.setUserData(de.aSprite);
+		
+		de.aSprite.setSize(75, 50);
+		de.animateMe();
+		
+		
+		
+		
+		
+		
+		//b.bulletLife = 100;
+
+		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false)
 		{
-			@Override
+			
+			
+			
+		}*/
+			/*@Override
 			public void onUpdate(float pSecondsElapsed)
 			{
 
+				de.aSprite.setUserData(ResourcesManager.getInstance().enemy.deepCopy());
 				super.onUpdate(pSecondsElapsed);// This is very important to
 												// be in this exact spot
 				// camera.onUpdate(0.1f);
 
 				if (de.aSprite.getY() <= 0) // Body falls below bottom of scene
 				{
-					de.onDie();
+					//de.onDie();
+					de.squish();
 				}
 
 				if (de.isGoRight())
@@ -185,7 +222,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					de.body.setLinearVelocity(new Vector2(-3, de.body.getLinearVelocity().y));
 				}
 			}
-		});
+		});*/
+		//GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
+		//Log.v("Scene Validity" , scene.toString());
+		try
+		{
+		DEList.add(DE);
+		//this.DEList.add(de);
+		Log.v("DEMI ENEMY LIST COUNT", "#" + DEList.size());
+		this.attachChild(de.aSprite);
+		}
+		catch(NullPointerException jnpe)
+		{
+			Log.v("NPE" , jnpe.toString());
+		}
+		
+		
 }
 		
 
@@ -195,10 +247,32 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		synchronized (this)
 		{
 			Iterator<Bullet> it = bulletList.iterator();
+			Iterator<DemiEnemy> dl = DEList.iterator();
 			while (it.hasNext())
 			{
 				Bullet b = (Bullet) it.next();
 				
+			
+				
+				
+				while(dl.hasNext())
+				{
+					DemiEnemy d = (DemiEnemy) dl.next();
+					if(d.aSprite.collidesWith(b.sprite) || player.collidesWith(d.aSprite) || b.sprite.collidesWith(d.aSprite))
+					{
+						Log.v("SQUISH", "Squish Activated");
+						d.squish();		
+						addToScore(-1);
+						}
+					else
+					{
+						Log.v("NO SQUISH" , "Squish Not Called");
+					}
+					
+					
+				}
+				
+				Log.v("NO SQUISH" , "Squish Not Called EVER in main loop " + 	DEList.size());
 				b.setNewX(b.sprite.getX());
 
 				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite) ||(b.getOldX() == b.getNewX()) )																																																			// )
@@ -242,6 +316,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setHUD(null);
 		camera.setChaseEntity(null);
 		camera.setCenter(400, 240);
+		
 
 		// code responsible for disposing scene
 		// removing all game scene objects.
@@ -418,7 +493,32 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY))
 					{
-						enemy = new Monkey(x, y, getVbom(), camera, physicsWorld)
+						
+						//Log.v("Demi Enemy Added " , "Creating DemiEnemy");
+							DE = DemiEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
+						//	Log.v("Demi Enemy Added 2" , "Creating DemiEnemy");
+						
+							DE.aSprite.setPosition(x ,y);
+							//Log.v("Demi Enemy Added 3" , "Creating DemiEnemy");
+							DE.aSprite.setVisible(true);
+							//Log.v("Demi Enemy Added 4" , "Creating DemiEnemy");
+							DE.aSprite.detachSelf();
+							Log.v("Demi Enemy Added 5" , "Creating DemiEnemy");
+							DE.aSprite.setSize(40, 40);
+							DE.animateMe();
+							Log.v("DEList" , "Demi Enemy Count Size: " + this.toString());
+					        Log.v("Demi Enemy Add " , "Demi Enemy Count Size: " + demiEnemyCount);
+							demiEnemyCount ++;
+							
+							attachDemiEnemy(DE);
+							//Log.v("Demi Enemy Add " , "Demi Enemy List Size: " + demiEnemyList.size());
+							//demiEnemyList.add(DE);
+							//GameScene.instance.attachDemiEnemy(DE);	
+							
+						//}
+						//DE = DemiEnemyPool.sharedBulletPool().obtainPoolItem();
+						
+						/*//enemy = new Monkey(x, y, getVbom(), camera, physicsWorld)
 							{
 								@Override
 								protected void onManagedUpdate(float pSecondsElapsed)
@@ -443,7 +543,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 									// According to tutorial this following code
 									// should be checked in the cleaner method
-									/*
+									
 									 * if(bullet.collidesWith(this)) {
 									 * this.takeDamage(-50); if(this.getLife()
 									 * <= 0) { this.onDie();
@@ -452,7 +552,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									 * this.squish();
 									 * 
 									 * } }
-									 */
+									 
 
 									if (life <= 0)
 									{
@@ -515,10 +615,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									this.squish();
 
 								}
-							};
-						enemy.setSize(75, 50);
-						enemy.setSpeed((int) (Math.random() * 15));
-						levelObject = enemy;
+							};*/
+				/*		enemy.setSize(75, 50);
+						enemy.setSpeed((int) (Math.random() * 15));*/
+							DemiEnemy de2 = new DemiEnemy();
+							
+							de2.aSprite.setUserData(ResourcesManager.getInstance().bullet);
+							
+						levelObject = de2.aSprite;
 					} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE))
 					{
 						levelObject = new Sprite(x, y, resourcesManager.complete_stars_region, getVbom())
@@ -551,6 +655,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 		levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
 	}
+
+	
 
 	private void createGameOverText()
 	{

@@ -21,6 +21,7 @@ public class GameLoopUpdateHandler implements IUpdateHandler
 		//GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 		//Log.v("Cleaner Called", "Cleaner is getting called from GameLoopUpdateHandler. Number of children: " + scene.getChildCount() );
 		((GameScene)MainGameEngineActivity.getSharedInstance().mCurrentScene).cleaner();
+		//((GameScene)MainGameEngineActivity.getSharedInstance().mCurrentScene).EnemyUpdater();
 		//((GameScene)MainGameEngineActivity.getSharedInstance().mCurrentScene).BulletInit();
 		
 	}

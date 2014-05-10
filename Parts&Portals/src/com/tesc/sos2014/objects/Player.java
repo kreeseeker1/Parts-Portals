@@ -123,7 +123,7 @@ public abstract class Player extends AnimatedSprite
 
 	public void shoot()
 	{
-		Log.v("Player", "PLayer getting MainGameEngineActivity.getSharedInstance().mCurrentScene");
+		//Log.v("Player", "PLayer getting MainGameEngineActivity.getSharedInstance().mCurrentScene");
 			
 		GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 		Log.v("Player", "PLayer got MainGameEngineActivity.getSharedInstance().mCurrentScene");

@@ -49,7 +49,7 @@ public class DemiEnemy
 	}
 
 
-	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
+	/*private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
 	{
 		body = PhysicsFactory.createBoxBody(physicsWorld, aSprite, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-53, 0, 0));
 		// dynamic bodies can collide with each other and kinematic and static
@@ -57,7 +57,7 @@ public class DemiEnemy
 
 		body.setUserData("enemy"); // Set the sprite image
 		body.setFixedRotation(false); // wont tumble I assume
-	}
+	}*/
 		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(aSprite, body, true, false)
 			{
 				@Override
@@ -150,6 +150,7 @@ public class DemiEnemy
 	{
 		body.setActive(false);
 		aSprite.setIgnoreUpdate(true);
+		aSprite.setVisible(false);
 	}
 
 	public boolean isGoRight()

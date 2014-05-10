@@ -12,7 +12,7 @@ public class DemiEnemyPool extends GenericPool <DemiEnemy>
 
 public static DemiEnemyPool instance;
 	
-	public static DemiEnemyPool sharedBulletPool()
+	public static DemiEnemyPool sharedDemiEnemyPool()
 	{
 		if(instance == null)
 		{
@@ -43,12 +43,12 @@ public static DemiEnemyPool instance;
 	protected DemiEnemy onAllocatePoolItem()
 	{
 		//Log.v("Bullet", "BulletPool onAllocatePoolItem");
-		/*DemiEnemy de = new DemiEnemy();
+		DemiEnemy de = new DemiEnemy();
 		
-		de.aSprite.setVisible(true);*/
+		de.aSprite.setVisible(true);
 	
 		
-		return new DemiEnemy();
+		return  de;
 		
 	}
 	
