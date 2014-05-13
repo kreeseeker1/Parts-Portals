@@ -44,6 +44,7 @@ public static DemiEnemyPool instance;
 	{
 		//Log.v("Bullet", "BulletPool onAllocatePoolItem");
 		DemiEnemy de = new DemiEnemy();
+		de.setDead(false);
 		
 		de.aSprite.setVisible(true);
 	
@@ -58,7 +59,7 @@ public static DemiEnemyPool instance;
 		super.onHandleRecycleItem(b);
 		b.aSprite.setVisible(false);
 		b.aSprite.setIgnoreUpdate(true);
-		
+		b.setDead(true);
 		b.body.setActive(false);
 		
 	}

@@ -19,6 +19,8 @@ public class Bullet
 	{
 		sprite = new Sprite(0,0,ResourcesManager.getInstance().bullet.deepCopy(),MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
 		sprite.setVisible(true);
+		//sprite.setSize(20, 20);
+		
 	}
 	
 	public float getOldX()

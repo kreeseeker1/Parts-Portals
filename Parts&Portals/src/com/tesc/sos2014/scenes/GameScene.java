@@ -87,17 +87,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 
 	private static GameScene instance;
-	
+
 	private Player player;
 	private DemiEnemy DE;
 	private Monkey enemy;
 	private Health health;
 	public LinkedList<Bullet> bulletList = new LinkedList<Bullet>();
-	public LinkedList<DemiEnemy> DEList ;
-	//public LinkedList<DemiEnemy>demiEnemyList = new LinkedList();
-	
-	
-	
+	public LinkedList<DemiEnemy> DEList;
+	// public LinkedList<DemiEnemy>demiEnemyList = new LinkedList();
+
 	public int bulletCount = 0;
 	private Text gameOverText;
 
@@ -106,7 +104,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean playerIsDead = false;
 	private boolean goingLeft = true, goingRight = false;
 	public int demiEnemyCount = 0;
-	
 
 	public GameScene()
 		{
@@ -116,17 +113,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
-		//BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
+		BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
 		Log.v("CreateScene", "CreateScene Started");
 		DEList = new LinkedList<DemiEnemy>();
-		//Log.v("CreateScene", "dDemi Enemy List Size" + demiEnemyList.size());
+		// Log.v("CreateScene", "dDemi Enemy List Size" + demiEnemyList.size());
 		createBackground();
 		createHUD();
 		createPhysics();
 		loadLevel(1);
 		createGameOverText();
 		setOnSceneTouchListener(this);
-		//demiEnemyList.add(new DemiEnemy());
+		// demiEnemyList.add(new DemiEnemy());
 	}
 
 	public void attachBullet(Bullet b)
@@ -141,10 +138,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			b.sprite = new Sprite(player.getX() + 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
 		}
 
+		b.sprite.setSize(20, 20);
 		b.setOldX(b.getNewX());
 		b.setNewX(b.sprite.getX());
-		
+
 		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld, b.sprite, BodyType.DynamicBody, fd);
+
 		b.bulletBody.setActive(true);
 		b.bulletLife = 100;
 
@@ -164,83 +163,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		Log.v("Bullet Pos", "PLayerX: " + player.getX());
 		Log.v("Bullet Pos", "BulletX: " + b.sprite.getX());
 
-		b.sprite.setSize(10f, 10f);
+		// b.sprite.setSize(10f, 10f);
 		this.attachChild(b.sprite);
 	}
-	
+
 	public void attachDemiEnemy(DemiEnemy de)
 	{
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
 		de.body.setActive(true);
-		
-		
+
 		physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false));
-		
+
 		de.body.setUserData(de.aSprite);
-		
+
 		de.aSprite.setSize(75, 50);
 		de.animateMe();
-		
-		
-		
-		
-		
-		
-		//b.bulletLife = 100;
 
-		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false)
-		{
-			
-			
-			
-		}*/
-			/*@Override
-			public void onUpdate(float pSecondsElapsed)
-			{
-
-				de.aSprite.setUserData(ResourcesManager.getInstance().enemy.deepCopy());
-				super.onUpdate(pSecondsElapsed);// This is very important to
-												// be in this exact spot
-				// camera.onUpdate(0.1f);
-
-				if (de.aSprite.getY() <= 0) // Body falls below bottom of scene
-				{
-					//de.onDie();
-					de.squish();
-				}
-
-				if (de.isGoRight())
-				{
-					// super.onUpdate(pSecondsElapsed);
-					de.body.setLinearVelocity(new Vector2(3, de.body.getLinearVelocity().y));
-																							
-				}
-				if (de.isGoLeft())
-				{
-					// super.onUpdate(pSecondsElapsed);
-					de.body.setLinearVelocity(new Vector2(-3, de.body.getLinearVelocity().y));
-				}
-			}
-		});*/
-		//GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
-		//Log.v("Scene Validity" , scene.toString());
 		try
 		{
-		DEList.add(DE);
-		//this.DEList.add(de);
-		Log.v("DEMI ENEMY LIST COUNT", "#" + DEList.size());
-		this.attachChild(de.aSprite);
-		}
-		catch(NullPointerException jnpe)
+			DEList.add(DE);
+			// this.DEList.add(de);
+			Log.v("DEMI ENEMY LIST COUNT", "#" + DEList.size());
+			this.attachChild(de.aSprite);
+		} catch (NullPointerException jnpe)
 		{
-			Log.v("NPE" , jnpe.toString());
+			Log.v("NPE", jnpe.toString());
 		}
-		
-		
-}
-		
 
+	}
 
 	public void cleaner()
 	{
@@ -251,35 +202,33 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			while (it.hasNext())
 			{
 				Bullet b = (Bullet) it.next();
-				
-			
-				
-				
-				while(dl.hasNext())
+
+				while (dl.hasNext())
 				{
 					DemiEnemy d = (DemiEnemy) dl.next();
-					if(d.aSprite.collidesWith(b.sprite) || player.collidesWith(d.aSprite) || b.sprite.collidesWith(d.aSprite))
+					if (d.aSprite.collidesWith(b.sprite) || b.sprite.collidesWith(d.aSprite))
 					{
-						Log.v("SQUISH", "Squish Activated");
-						d.squish();		
+						Log.v("SQUISH", "Squish Activated. DEList size: " + DEList.size() + ". demiEnemyCount: " + demiEnemyCount);
+						d.squish();
+						dl.remove();
+						BulletPool.sharedBulletPool().recyclePoolItem(b);
+						// addToScore(-1);
+					} else if (player.collidesWith(d.aSprite) || d.aSprite.collidesWith(player))
+					{
 						addToScore(-1);
-						}
-					else
-					{
-						Log.v("NO SQUISH" , "Squish Not Called");
 					}
-					
-					
+
 				}
-				
-				Log.v("NO SQUISH" , "Squish Not Called EVER in main loop " + 	DEList.size());
+
+				// Log.v("NO SQUISH" , "Squish Not Called EVER in main loop " +
+				// DEList.size());
 				b.setNewX(b.sprite.getX());
 
-				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite) ||(b.getOldX() == b.getNewX()) )																																																			// )
+				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite) || (b.getOldX() == b.getNewX())) // )
 				{
 					Log.v("Cleaner", "Bullet Removed.");
 					Log.v("Children", "Number of Children" + this.getChildCount());
-					
+
 					BulletPool.sharedBulletPool().recyclePoolItem(b);
 					it.remove();
 					continue;
@@ -288,6 +237,31 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					b.bulletLife--;
 					b.setOldX(b.getNewX());
 					b.setNewX(b.sprite.getX());
+				}
+			}
+
+			while (dl.hasNext())
+			{
+				DemiEnemy d = (DemiEnemy) dl.next();
+
+				if (d.isDead())
+				{
+
+				} 
+				else if (!d.isDead())
+				{
+					if (d.aSprite.getX() -25 < player.getX())
+					{
+						d.runLeft();
+					} else if (d.aSprite.getX() +25 > player.getX())
+					{
+						d.runRight();
+					}
+
+					if (player.getY() > d.aSprite.getY())
+					{
+						d.jump();
+					}
 				}
 			}
 		}
@@ -316,7 +290,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setHUD(null);
 		camera.setChaseEntity(null);
 		camera.setCenter(400, 240);
-		
 
 		// code responsible for disposing scene
 		// removing all game scene objects.
@@ -357,7 +330,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 
-					camera.setBounds(0, 0, width, height); // here we set camera bounds
+					camera.setBounds(0, 0, width, height); // here we set camera
+															// bounds
 					camera.setBoundsEnabled(true);
 
 					return GameScene.this;
@@ -375,7 +349,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					final Sprite levelObject;
 
-					
 					if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATL))
 					{
 						levelObject = new Sprite(x, y, resourcesManager.platformleft, getVbom());
@@ -493,135 +466,111 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY))
 					{
-						
-						//Log.v("Demi Enemy Added " , "Creating DemiEnemy");
-							DE = DemiEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
-						//	Log.v("Demi Enemy Added 2" , "Creating DemiEnemy");
-						
-							DE.aSprite.setPosition(x ,y);
-							//Log.v("Demi Enemy Added 3" , "Creating DemiEnemy");
-							DE.aSprite.setVisible(true);
-							//Log.v("Demi Enemy Added 4" , "Creating DemiEnemy");
-							DE.aSprite.detachSelf();
-							Log.v("Demi Enemy Added 5" , "Creating DemiEnemy");
-							DE.aSprite.setSize(40, 40);
-							DE.animateMe();
-							Log.v("DEList" , "Demi Enemy Count Size: " + this.toString());
-					        Log.v("Demi Enemy Add " , "Demi Enemy Count Size: " + demiEnemyCount);
-							demiEnemyCount ++;
-							
-							attachDemiEnemy(DE);
-							//Log.v("Demi Enemy Add " , "Demi Enemy List Size: " + demiEnemyList.size());
-							//demiEnemyList.add(DE);
-							//GameScene.instance.attachDemiEnemy(DE);	
-							
-						//}
-						//DE = DemiEnemyPool.sharedBulletPool().obtainPoolItem();
-						
-						/*//enemy = new Monkey(x, y, getVbom(), camera, physicsWorld)
-							{
-								@Override
-								protected void onManagedUpdate(float pSecondsElapsed)
-								{
-									super.onManagedUpdate(pSecondsElapsed);
 
-									this.setSpeed((int) (Math.random() * 15));
+						// Log.v("Demi Enemy Added " , "Creating DemiEnemy");
+						DE = DemiEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
+						// Log.v("Demi Enemy Added 2" , "Creating DemiEnemy");
 
-									this.animateMe();
+						DE.aSprite.setPosition(x, y);
+						// Log.v("Demi Enemy Added 3" , "Creating DemiEnemy");
+						DE.aSprite.setVisible(true);
+						// Log.v("Demi Enemy Added 4" , "Creating DemiEnemy");
+						DE.aSprite.detachSelf();
+						Log.v("Demi Enemy Added 5", "Creating DemiEnemy");
+						DE.aSprite.setSize(40, 40);
+						DE.animateMe();
+						Log.v("DEList", "Demi Enemy Count Size: " + this.toString());
+						Log.v("Demi Enemy Add ", "Demi Enemy Count Size: " + demiEnemyCount);
+						demiEnemyCount++;
 
-									// time delta
-									oldTime = newTime;
-									newTime = System.nanoTime();
+						attachDemiEnemy(DE);
+						// Log.v("Demi Enemy Add " , "Demi Enemy List Size: " +
+						// demiEnemyList.size());
+						// demiEnemyList.add(DE);
+						// GameScene.instance.attachDemiEnemy(DE);
 
-									// float lastPos = this.getY();
-									if (getDiff(oldTime, newTime) > 1000000 && player.getY() > this.getY() + 5)
-									{
-										this.setFootContactsOne();
-										this.jump();
-										// this.setFootContactsZero();
-									}
+						// }
+						// DE =
+						// DemiEnemyPool.sharedBulletPool().obtainPoolItem();
 
-									// According to tutorial this following code
-									// should be checked in the cleaner method
-									
-									 * if(bullet.collidesWith(this)) {
-									 * this.takeDamage(-50); if(this.getLife()
-									 * <= 0) { this.onDie();
-									 * this.setVisible(false);
-									 * this.setIgnoreUpdate(true);
-									 * this.squish();
-									 * 
-									 * } }
-									 
+						/*
+						 * //enemy = new Monkey(x, y, getVbom(), camera,
+						 * physicsWorld) {
+						 * 
+						 * @Override protected void onManagedUpdate(float
+						 * pSecondsElapsed) {
+						 * super.onManagedUpdate(pSecondsElapsed);
+						 * 
+						 * this.setSpeed((int) (Math.random() * 15));
+						 * 
+						 * this.animateMe();
+						 * 
+						 * // time delta oldTime = newTime; newTime =
+						 * System.nanoTime();
+						 * 
+						 * // float lastPos = this.getY(); if (getDiff(oldTime,
+						 * newTime) > 1000000 && player.getY() > this.getY() +
+						 * 5) { this.setFootContactsOne(); this.jump(); //
+						 * this.setFootContactsZero(); }
+						 * 
+						 * // According to tutorial this following code //
+						 * should be checked in the cleaner method
+						 * 
+						 * if(bullet.collidesWith(this)) { this.takeDamage(-50);
+						 * if(this.getLife() <= 0) { this.onDie();
+						 * this.setVisible(false); this.setIgnoreUpdate(true);
+						 * this.squish();
+						 * 
+						 * } }
+						 * 
+						 * 
+						 * if (life <= 0) {
+						 * 
+						 * player.onDie(); player.setVisible(false);
+						 * player.setIgnoreUpdate(true); player.onDetached();
+						 * playerIsDead = true; } if (player.getX() <
+						 * this.getX() - Math.random() * 10) {
+						 * 
+						 * this.setFlippedHorizontal(false); this.runLeft();
+						 * goingLeft = true; goingRight = false;
+						 * 
+						 * } else if (player.getX() > this.getX() +
+						 * Math.random() * 10) {
+						 * 
+						 * this.setFlippedHorizontal(true); this.runRight();
+						 * goingRight = true; goingLeft = false;
+						 * 
+						 * } if (player.collidesWith(this) ||
+						 * this.collidesWith(player)) { addToScore(-1);
+						 * 
+						 * }
+						 * 
+						 * Iterator<Bullet> it2 = bulletList.iterator();
+						 * 
+						 * if (it2 != null) {
+						 * 
+						 * while (it2.hasNext()) { Bullet b2 = (Bullet)
+						 * it2.next(); if (this.collidesWith(b2.sprite)) {
+						 * this.onDie(); } } }
+						 * 
+						 * }
+						 * 
+						 * private double getDiff(long oldTime, long newTime) {
+						 * return newTime - oldTime; }
+						 * 
+						 * @Override public void onDie() {
+						 * this.setVisible(false); this.squish();
+						 * 
+						 * } };
+						 */
+						/*
+						 * enemy.setSize(75, 50); enemy.setSpeed((int)
+						 * (Math.random() * 15));
+						 */
+						DemiEnemy de2 = new DemiEnemy();
 
-									if (life <= 0)
-									{
+						de2.aSprite.setUserData(ResourcesManager.getInstance().bullet);
 
-										player.onDie();
-										player.setVisible(false);
-										player.setIgnoreUpdate(true);
-										player.onDetached();
-										playerIsDead = true;
-									}
-									if (player.getX() < this.getX() - Math.random() * 10)
-									{
-
-										this.setFlippedHorizontal(false);
-										this.runLeft();
-										goingLeft = true;
-										goingRight = false;
-
-									} else if (player.getX() > this.getX() + Math.random() * 10)
-									{
-
-										this.setFlippedHorizontal(true);
-										this.runRight();
-										goingRight = true;
-										goingLeft = false;
-
-									}
-									if (player.collidesWith(this) || this.collidesWith(player))
-									{
-										addToScore(-1);
-
-									}
-
-									Iterator<Bullet> it2 = bulletList.iterator();
-
-									if (it2 != null)
-									{
-
-										while (it2.hasNext())
-										{
-											Bullet b2 = (Bullet) it2.next();
-											if (this.collidesWith(b2.sprite))
-											{
-												this.onDie();
-											}
-										}
-									}
-
-								}
-
-								private double getDiff(long oldTime, long newTime)
-								{
-									return newTime - oldTime;
-								}
-
-								@Override
-								public void onDie()
-								{
-									this.setVisible(false);
-									this.squish();
-
-								}
-							};*/
-				/*		enemy.setSize(75, 50);
-						enemy.setSpeed((int) (Math.random() * 15));*/
-							DemiEnemy de2 = new DemiEnemy();
-							
-							de2.aSprite.setUserData(ResourcesManager.getInstance().bullet);
-							
 						levelObject = de2.aSprite;
 					} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE))
 					{
@@ -655,8 +604,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 		levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
 	}
-
-	
 
 	private void createGameOverText()
 	{

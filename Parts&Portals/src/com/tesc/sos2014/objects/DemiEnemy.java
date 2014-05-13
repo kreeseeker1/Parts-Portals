@@ -21,8 +21,10 @@ public class DemiEnemy
 	private boolean goLeft = false;
 	private int footContacts = 0;
 	private int life = 100;
-	public int speed = 3;
+	public int speed = 10;
 	public AnimatedSprite aSprite;
+	
+	private boolean isDead = false;
 
 
 	public DemiEnemy()
@@ -107,16 +109,23 @@ public class DemiEnemy
 
 	public void runRight()
 	{
+		body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));// with
+		
 		goRight = true;
 		goLeft = false;
+		
+		aSprite.setFlippedHorizontal(false);
 		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 
 	}
 
 	public void runLeft()
 	{
+		body.setLinearVelocity(new Vector2(speed, body.getLinearVelocity().y));// with
+		
 		goRight = false;
 		goLeft = true;
+		aSprite.setFlippedHorizontal(true);
 		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 		// animate(ENEMY_ANIMATE, 0, 2, true);
 
@@ -166,6 +175,16 @@ public class DemiEnemy
 	public boolean isGoLeft()
 	{
 		return goLeft;
+	}
+
+	public boolean isDead()
+	{
+		return isDead;
+	}
+
+	public void setDead(boolean isDead)
+	{
+		this.isDead = isDead;
 	}
 
 	public void setGoLeft(boolean goLeft)
