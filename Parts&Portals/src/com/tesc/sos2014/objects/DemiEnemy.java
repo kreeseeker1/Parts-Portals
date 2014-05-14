@@ -22,6 +22,7 @@ public class DemiEnemy
 	private int footContacts = 0;
 	private int life = 100;
 	public int speed = 10;
+	public int jumpert = 100;
 	public AnimatedSprite aSprite;
 	
 	private boolean isDead = false;
@@ -150,9 +151,10 @@ public class DemiEnemy
 	{
 		if (footContacts < 1)
 		{
+			body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
 			return;
 		}
-		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
+		//body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
 	}
 
 	public void squish()

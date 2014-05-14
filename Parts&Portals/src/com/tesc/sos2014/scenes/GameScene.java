@@ -37,6 +37,7 @@ import org.xml.sax.Attributes;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -104,6 +105,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean playerIsDead = false;
 	private boolean goingLeft = true, goingRight = false;
 	public int demiEnemyCount = 0;
+	public int mapNum = 1;
 
 	public GameScene()
 		{
@@ -121,15 +123,27 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		createHUD();
 		createPhysics();
 		loadLevel(1);
+		// GenerateMap(mapNum);
 		createGameOverText();
 		setOnSceneTouchListener(this);
 		// demiEnemyList.add(new DemiEnemy());
 	}
 
+	// ==========================================================================================================================================
+	// ATTACH BLOCK START
+	// ==========================================================================================================================================
+
 	public void attachBullet(Bullet b)
 	{
+		//////////////////////////////////////////////////////////////////////////////////////////////
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//========================================================================================================================================
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (player.isFacingLeft())
 		{
 			b.sprite = new Sprite(player.getX() - 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
@@ -137,18 +151,29 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		{
 			b.sprite = new Sprite(player.getX() + 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
 		}
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//=========================================================================================================================================
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////
 		b.sprite.setSize(20, 20);
 		b.setOldX(b.getNewX());
 		b.setNewX(b.sprite.getX());
-
 		b.bulletBody = PhysicsFactory.createCircleBody(physicsWorld, b.sprite, BodyType.DynamicBody, fd);
-
 		b.bulletBody.setActive(true);
 		b.bulletLife = 100;
+		b.bulletBody.setUserData(b.sprite);
+		b.bulletBody.setActive(true);
+		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite, b.bulletBody, true, true));
+		
+		//=======================================================================================================
+		///////////////////////////////////////////////////////////////////////////////////////////////////////==
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(b.sprite, b.bulletBody, true, true));///////==
+		///////////////////////////////////////////////////////////////////////////////////////////////////////==
+		//=======================================================================================================
 
+		////////////////////////////////////////////////////////////////////////////
 		if (player.isFacingLeft())
 		{
 			b.bulletBody.setLinearVelocity(50f, b.bulletBody.getLinearVelocity().y);
@@ -156,17 +181,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		{
 			b.bulletBody.setLinearVelocity(-50f, b.bulletBody.getLinearVelocity().y);
 		}
-
-		b.bulletBody.setUserData(b.sprite);
-		b.bulletBody.setActive(true);
+		/////////////////////////////////////////////////////////////////////////////
+		
 
 		Log.v("Bullet Pos", "PLayerX: " + player.getX());
 		Log.v("Bullet Pos", "BulletX: " + b.sprite.getX());
 
-		// b.sprite.setSize(10f, 10f);
 		this.attachChild(b.sprite);
 	}
 
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	public void attachDemiEnemy(DemiEnemy de)
 	{
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
@@ -192,6 +219,54 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		}
 
 	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//======================================================================================================
+	public void attachWall(Sprite s)
+	{
+
+		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+		Body b;
+
+		b = PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, fd);
+		b.setActive(true);
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(s, b, true, false));
+
+		// ?????? Future make a LinkedList for walls ???????????????????
+		// possibly use a linked list of type sprite. May not need a wall object
+
+	}
+	//======================================================================================================
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	//====================================================================================
+	public void attachFloor(Sprite s)
+	{
+
+		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+		Body b;
+
+		b = PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, fd);
+		b.setActive(true);
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(s, b, true, false));
+
+		// ?????? Future make a LinkedList for floors ???????????????????
+		// possibly use a linked list of type sprite. May not need a wall object
+
+	}
+	//====================================================================================
+	
+	
+	
+	
+
+	// ==========================================================================================================================================
+	// ATTACH BLOCK END
+	// ==========================================================================================================================================
 
 	public void cleaner()
 	{
@@ -237,8 +312,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					b.bulletLife--;
 					b.setOldX(b.getNewX());
 					b.setNewX(b.sprite.getX());
+					continue;
 				}
 			}
+			// ////////////////////////////////////Begin AI Loop
+			// //////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			while (dl.hasNext())
 			{
@@ -247,29 +326,44 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				if (d.isDead())
 				{
 
-				} 
-				else if (!d.isDead())
+					d.aSprite.setVisible(false);
+					DemiEnemyPool.sharedDemiEnemyPool().recyclePoolItem(d);
+				} else if (!d.isDead())
 				{
-					if (d.aSprite.getX() -25 < player.getX())
+					if (d.aSprite.getX() - 30 < player.getX())
 					{
 						d.runLeft();
-					} else if (d.aSprite.getX() +25 > player.getX())
+					} else if (d.aSprite.getX() + 30 > player.getX())
 					{
 						d.runRight();
 					}
-
-					if (player.getY() > d.aSprite.getY())
+					if (d.jumpert <= 0 && player.getY() > d.aSprite.getY())
 					{
-						d.jump();
+
+						d.jump(); //
+						d.jumpert = 100;
+					} else if (d.jumpert > 0)
+					{
+						d.jumpert = d.jumpert - 10;
 					}
+
 				}
 			}
+			// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// ////////////////////////////////////////////////////////End AI
+			// Loop
+			// //////////////////////////////////////////////////////////////////////////////
 		}
 	}
 
 	public static GameScene getSharedInstance()
 	{
 		return instance;
+	}
+
+	private double getDiff(long oldTime, long newTime)
+	{
+		return newTime - oldTime;
 	}
 
 	@Override
@@ -724,6 +818,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.attachChild(scoreText);
 
 		camera.setHUD(gameHUD);
+	}
+
+	public int getMapNum()
+	{
+		return mapNum;
+	}
+
+	public void setMapNum(int mapNum)
+	{
+		this.mapNum = mapNum;
 	}
 
 	private void createBackground()

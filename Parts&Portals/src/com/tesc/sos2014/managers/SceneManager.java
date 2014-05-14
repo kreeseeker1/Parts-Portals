@@ -10,6 +10,7 @@ import com.tesc.sos2014.scenes.BaseScene;
 import com.tesc.sos2014.scenes.GameScene;
 import com.tesc.sos2014.scenes.LoadingScene;
 import com.tesc.sos2014.scenes.MainMenuScene;
+import com.tesc.sos2014.scenes.OptionsMenu;
 import com.tesc.sos2014.scenes.SplashScene;
 
 
@@ -24,6 +25,7 @@ public class SceneManager
 	private BaseScene menuScene;
 	private BaseScene gameScene;
 	private BaseScene loadingScene;
+	private BaseScene optionsmenu;
 	
 	//---------------------------------------------
 	// VARIABLES
@@ -84,6 +86,12 @@ public class SceneManager
 		loadingScene = new LoadingScene();
         SceneManager.getInstance().setScene(menuScene);
         disposeSplashScene();
+	}
+	
+	public void createOptionScene()
+	{
+		ResourcesManager.getInstance().loadMenuResources();
+		optionsmenu = new OptionsMenu();
 	}
 	
 	public void createSplashScene(OnCreateSceneCallback pOnCreateSceneCallback)//These kind of methods are pretty self explanatory
