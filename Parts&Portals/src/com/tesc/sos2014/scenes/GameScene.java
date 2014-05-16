@@ -3,6 +3,7 @@ package com.tesc.sos2014.scenes;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
@@ -51,12 +52,14 @@ import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
 import com.tesc.sos2014.objects.Bullet;
 import com.tesc.sos2014.objects.DemiEnemy;
+import com.tesc.sos2014.objects.GameData;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
-import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
 import com.tesc.sos2014.pools.DemiEnemyPool;
+import com.tesc.sos2014.utilities.Entity;
+import com.tesc.sos2014.utilities.ParsePngFile;
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
@@ -99,6 +102,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	public int bulletCount = 0;
 	private Text gameOverText;
+	
+	private boolean fire = true, noFire = false;
 
 	private boolean gameOverDisplayed = false;
 	private boolean firstTouch = false;
@@ -106,6 +111,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean goingLeft = true, goingRight = false;
 	public int demiEnemyCount = 0;
 	public int mapNum = 1;
+	
+	public List<Entity> GDObjects;
+	
+	//GDObjects = PNGParser.ParseMap("Level1.png");
 
 	public GameScene()
 		{
@@ -122,11 +131,33 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		createBackground();
 		createHUD();
 		createPhysics();
+		//setData();
 		loadLevel(1);
 		// GenerateMap(mapNum);
 		createGameOverText();
 		setOnSceneTouchListener(this);
 		// demiEnemyList.add(new DemiEnemy());
+	}
+
+	private void setData()
+	{
+		  try
+			{
+			  Log.v("Parser Error Before", "ParserError Before");
+				GDObjects  = ParsePngFile.readImageFile("level/level_1.png");
+				if(GDObjects.size() == 0) {
+					Log.v("size" , "size empty");
+				}
+				else {
+					Log.v("size", "size not empty");
+				}
+				
+			} catch (IOException e)
+			{
+				Log.v("Parser Error", "ParserError");
+				e.printStackTrace();
+			}
+		
 	}
 
 	// ==========================================================================================================================================
@@ -261,7 +292,47 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//====================================================================================
 	
 	
-	
+	public void generateMap(LinkedList<GameData> gd)
+	{
+		Iterator<GameData> gada = gd.iterator();
+		
+		while(gada.hasNext())
+		{
+			GameData g = gada.next();
+			if(g.getTypeID() == "Player")	
+			{
+				player = new Player(g.getX(), g.getY(), getVbom(), camera, physicsWorld)
+				{
+
+					@Override
+					public void onDie()
+					{
+						if (!gameOverDisplayed)
+						{
+							displayGameOverText();
+						}
+						this.body.setActive(false);// removes body
+						this.setPosition(2000, 1000);// causes
+														// enemies
+														// to run to
+														// different
+														// part of
+														// screen
+						// this.detachSelf(); //This works I think
+						// by setting your x,y to 0,0
+					}
+				};
+				
+			}
+			else if(g.getTypeID() == "BaseEnemy" )
+			{
+				
+			}
+		}
+		
+		
+		
+	}
 	
 
 	// ==========================================================================================================================================
@@ -330,10 +401,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					DemiEnemyPool.sharedDemiEnemyPool().recyclePoolItem(d);
 				} else if (!d.isDead())
 				{
-					if (d.aSprite.getX() - 30 < player.getX())
+					if (d.aSprite.getX() - 230 < player.getX())
 					{
 						d.runLeft();
-					} else if (d.aSprite.getX() + 30 > player.getX())
+					} else if (d.aSprite.getX() + 230 > player.getX())
 					{
 						d.runRight();
 					}
@@ -403,10 +474,24 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				player.runLeft();
 				player.setFlippedHorizontal(true);
 			}
-			if (pSceneTouchEvent.getY() > player.getY())
-			{
-				player.jump();
-			}
+			
+			
+				
+				player.setJumping(true);
+			player.jps.setParticlesSpawnEnabled(true);
+				
+			
+		}
+		else if (pSceneTouchEvent.isActionUp())
+		{
+			
+				
+				player.setJumping(false);
+				//player.setParticleSpawned(noFire);
+				player.jps.setParticlesSpawnEnabled(false);
+				
+				
+			
 		}
 		return false;
 	}

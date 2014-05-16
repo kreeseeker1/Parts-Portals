@@ -66,6 +66,7 @@ public class ResourcesManager
 	public ITextureRegion platformmiddle;
 	public ITextureRegion platformright;
 	public ITextureRegion bullet;
+	public ITextureRegion jetfire;
 	
 	public IBackground gamebackground;
 	
@@ -156,6 +157,7 @@ public class ResourcesManager
        	
         control_base_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "controlBase.png");
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
+        jetfire = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "jetfire.png");
        	platformleft = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform/platform_left.png");
        	platformmiddle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform/platform_middle.png");
        	platformright = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform/platform_right.png");
