@@ -68,6 +68,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private int life = 1000;
 	private HUD gameHUD;
 	private Text scoreText;
+	public Text fuelText;
 	public PhysicsWorld physicsWorld;
 
 	private AnalogOnScreenControl stick;
@@ -286,7 +287,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		physicsWorld.registerPhysicsConnector(new PhysicsConnector(s, b, true, false));
 
 		// ?????? Future make a LinkedList for floors ???????????????????
-		// possibly use a linked list of type sprite. May not need a wall object
+		// possibly use a linked list of type sprite. May not need a floor object
 
 	}
 	//====================================================================================
@@ -479,6 +480,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				
 				player.setJumping(true);
 			player.jps.setParticlesSpawnEnabled(true);
+			//fuelText.setText("Fuel: " + player.getJumpTimer());
 				
 			
 		}
@@ -494,6 +496,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			
 		}
 		return false;
+	}
+
+	public Text getFuelText()
+	{
+		return fuelText;
+	}
+
+	public void setFuelText(Text fuelText)
+	{
+		this.fuelText.setText((CharSequence) fuelText)  ;
 	}
 
 	private void loadLevel(int levelID)
@@ -801,9 +813,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		gameHUD = new HUD();
 
+		fuelText = new Text(460,450,resourcesManager.font, "Fuel: 00000000 (Recharging)", new TextOptions(HorizontalAlign.RIGHT), getVbom());
 		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
+		fuelText.setColor(Color.GREEN);
+		fuelText.setScale(.5f);
 		scoreText.setAnchorCenter(0, 0);
-		scoreText.setText("Score: 100");
+		fuelText.setAnchorCenter(0, 0);
+		scoreText.setText("Score: 1000");
+		fuelText.setText("Fuel: 150");
+		
+		
 
 		stick = new AnalogOnScreenControl(75f, camera.getHeight() - 300, camera, ResourcesManager.getInstance().control_base_region.deepCopy(), ResourcesManager.getInstance().bullet.deepCopy(), .1f, getVbom(), new IAnalogOnScreenControlListener()
 			{
@@ -901,6 +920,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.setTouchAreaBindingOnActionMoveEnabled(true);
 
 		gameHUD.attachChild(scoreText);
+		gameHUD.attachChild(fuelText);
 
 		camera.setHUD(gameHUD);
 	}

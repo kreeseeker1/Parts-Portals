@@ -13,11 +13,13 @@ import org.andengine.entity.particle.modifier.AlphaParticleModifier;
 import org.andengine.entity.particle.modifier.ColorParticleModifier;
 import org.andengine.entity.particle.modifier.ScaleParticleModifier;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.text.Text;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.graphics.Color;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -45,7 +47,8 @@ public abstract class Player extends AnimatedSprite
 	private int footContacts = 0;
 	 public BatchedPseudoSpriteParticleSystem jps;//jumpjps
 	
-	private int jumpTimer = 150;
+	private int jumpTimer = 0;
+	private int fuelLevel = 150;
 	private int jumpRecharge = 75;
 	private int dblJumpTimer = 50;
 	private boolean jumping = false;
@@ -108,6 +111,20 @@ public abstract class Player extends AnimatedSprite
 	}
 	
 	
+	public int getJumpTimer()
+	{
+		return jumpTimer;
+	}
+
+
+
+	public void setJumpTimer(int jumpTimer)
+	{
+		this.jumpTimer = jumpTimer;
+	}
+
+
+
 	public boolean isParticleSpawned()
 	{
 		return isParticleSpawned;
@@ -142,6 +159,7 @@ public abstract class Player extends AnimatedSprite
 					{
 						jetfire();
 						jetfireCalled = true;
+						jumpTimer = fuelLevel;
 					}
 					if (getY() <= 0)
 					{
@@ -156,9 +174,21 @@ public abstract class Player extends AnimatedSprite
 						if(jumpTimer >= 1)
 						{
 							
-							
+							GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 						
-						
+							scene.fuelText.setText(("Fuel: "+ jumpTimer));
+							if(jumpTimer > fuelLevel /2)
+							{
+								scene.fuelText.setColor(Color.rgb(0, 255, 0));
+							}
+							else if (jumpTimer > fuelLevel/3 && jumpTimer< fuelLevel/ 2)
+							{
+								scene.fuelText.setColor(Color.rgb(255, 255, 0));
+							}
+							else
+							{
+								scene.fuelText.setColor(Color.rgb(255, 0, 0));
+							}
 						
 						body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 4));
 						pe.setCenter(getX(), getY());
@@ -167,14 +197,19 @@ public abstract class Player extends AnimatedSprite
 						}
 						else if(jumpTimer <= 0)
 						{
+							GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 							
+							
+							scene.fuelText.setText(("Fuel: "+ 0 + "(Charging)" ));
 							jumpRecharge --;
+							pe.setCenter(-1000, -1000);
+							
 						}
 						if(jumpRecharge <=0 && jumpTimer <=0)
 						{
-							
+							pe.setCenter(-1000, -1000);
 							jumpRecharge = 75;
-							jumpTimer = 150;
+							jumpTimer = fuelLevel;
 						}
 					}
 
