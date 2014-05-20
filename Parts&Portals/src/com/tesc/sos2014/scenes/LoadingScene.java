@@ -16,7 +16,7 @@ public class LoadingScene extends BaseScene
 	public void createScene()
 	{
 		//HACK!!!!! May not Work!!!
-		setBackground(new Background(Color.WHITE));
+		setBackground(new Background(Color.BLACK));
 		attachChild(new Text(400, 240, resourcesManager.font, "Loading Resources...", getVbom()));
 	
 		//HACK!!!!!

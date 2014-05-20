@@ -20,6 +20,7 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Color;
 
+import com.tesc.sos2014.objects.DemiEnemy;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 //import com.sos2014.GameActivity;
 
@@ -197,6 +198,8 @@ public class ResourcesManager
 	
 	public void unloadGameTextures()
 	{
+		bullet= null;
+		enemy = null;
 		//(Since we did not create any textures for game scene yet)
 	}
 	

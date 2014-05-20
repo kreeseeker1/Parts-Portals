@@ -119,6 +119,7 @@ public class SceneManager
             {
             	mEngine.unregisterUpdateHandler(pTimerHandler);
             	ResourcesManager.getInstance().loadGameResources();
+            //	ResourcesManager.getInstance().unloadGameTextures();
         		gameScene = new GameScene();
         		setScene(gameScene);//Launches scene
         		MainGameEngineActivity.getSharedInstance().mCurrentScene = gameScene;
@@ -129,7 +130,10 @@ public class SceneManager
 	public void loadMenuScene(final Engine mEngine)
 	{
 		setScene(loadingScene);
+		ResourcesManager.getInstance().unloadGameTextures();
 		gameScene.disposeScene();
+		
+		//gameScene.clearUpdateHandlers();
 		ResourcesManager.getInstance().unloadGameTextures();
 		mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() 
 		{

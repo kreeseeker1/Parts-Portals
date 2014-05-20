@@ -97,9 +97,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private DemiEnemy DE;
 	private Monkey enemy;
 	private Health health;
-	public LinkedList<Bullet> bulletList = new LinkedList<Bullet>();
+	public LinkedList<Bullet> bulletList ;
 	public LinkedList<DemiEnemy> DEList;
-	// public LinkedList<DemiEnemy>demiEnemyList = new LinkedList();
+	
 
 	public int bulletCount = 0;
 	private Text gameOverText;
@@ -125,10 +125,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
-		BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
+		
 		Log.v("CreateScene", "CreateScene Started");
 		DEList = new LinkedList<DemiEnemy>();
-		// Log.v("CreateScene", "dDemi Enemy List Size" + demiEnemyList.size());
+		bulletList = new LinkedList<Bullet>();
 		createBackground();
 		createHUD();
 		createPhysics();
@@ -169,6 +169,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		Log.v("Bullet Items Available", "Bullet Count" + BulletPool.instance.getAvailableItemCount());
+		Log.v("Bullet Nums", "Num of Bullets" + BulletPool.instance.getUnrecycledItemCount());
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -179,7 +180,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		if (player.isFacingLeft())
 		{
 			b.sprite = new Sprite(player.getX() - 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
-		} else if (player.isFacingRight())
+		}
+		else if (player.isFacingRight())
 		{
 			b.sprite = new Sprite(player.getX() + 25, player.getY(), ResourcesManager.getInstance().bullet.deepCopy(), getVbom());// .setUserData(ResourcesManager.getInstance().bullet);
 		}
@@ -441,6 +443,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void onBackKeyPressed()
 	{
+		bulletList.clear();
+
+		
 		SceneManager.getInstance().loadMenuScene(engine);
 	}
 
@@ -456,6 +461,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setHUD(null);
 		camera.setChaseEntity(null);
 		camera.setCenter(400, 240);
+		//Bullet Activity continues like normal after a GameScene -> Menu -> GameScene reset, but the sprites are not reinitialized.
+		//bulletList.clear();
 
 		// code responsible for disposing scene
 		// removing all game scene objects.
