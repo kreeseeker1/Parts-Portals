@@ -168,9 +168,9 @@ public abstract class Player extends AnimatedSprite
 					
 					if(jumping)
 					{
-						/*final long[] PLAYER_JUMP_ANIMATE = new long[] { 100 };
-						animate(PLAYER_JUMP_ANIMATE, 0, 0, true);*/
+						
 						jumpTimer --;
+						
 						if(jumpTimer >= 1)
 						{
 							
@@ -237,9 +237,9 @@ public abstract class Player extends AnimatedSprite
 		left = false;
 		stop = false;
 
-		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100, 100 };
+		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100, 100,100,100 };
 
-		animate(PLAYER_ANIMATE, 0, 6, true);
+		animate(PLAYER_ANIMATE, 0, 8, true);
 	}
 	
 	public void runLeft()
@@ -248,9 +248,9 @@ public abstract class Player extends AnimatedSprite
 		left = true;
 		stop = false;
 		
-		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100, 100 };
+		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100, 100 ,100,100 };
 
-		animate(PLAYER_ANIMATE, 0, 6, true);
+		animate(PLAYER_ANIMATE, 0, 8, true);
 
 	}
 
