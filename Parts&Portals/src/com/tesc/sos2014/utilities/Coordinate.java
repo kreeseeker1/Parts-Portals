@@ -6,6 +6,8 @@ public class Coordinate {
 	private int y;
 	private String typeID;
 	
+	//This is the custom Data Structure for holding our Entity
+	
 	public Coordinate(int x, int y, String typeID) {
 		this.x = x;
 		this.y = y;
