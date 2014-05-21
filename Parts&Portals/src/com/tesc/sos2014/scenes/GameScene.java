@@ -35,6 +35,7 @@ import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
 import org.xml.sax.Attributes;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -58,6 +59,7 @@ import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
 import com.tesc.sos2014.pools.BulletPool;
 import com.tesc.sos2014.pools.DemiEnemyPool;
+
 import com.tesc.sos2014.utilities.Entity;
 import com.tesc.sos2014.utilities.ParsePngFile;
 
@@ -105,6 +107,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public LinkedList<DemiEnemy> DEList;
 	
 
+	public List<Entity> eList;
 	public int bulletCount = 0;
 	private Text gameOverText;
 	
@@ -116,6 +119,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean goingLeft = true, goingRight = false;
 	public int demiEnemyCount = 0;
 	public int mapNum = 1;
+	
+
+//	ParsePngFile ppf;
 	
 	public List<Entity> GDObjects;
 	
@@ -130,6 +136,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public void createScene()
 	{
 		
+		
 		Log.v("CreateScene", "CreateScene Started");
 		DEList = new LinkedList<DemiEnemy>();
 		bulletList = new LinkedList<Bullet>();
@@ -138,10 +145,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		createPhysics();
 		//setData();
 		loadLevel(1);
-		// GenerateMap(mapNum);
+		// GenerateMap(mapNum); = new
 		createGameOverText();
 		setOnSceneTouchListener(this);
-		// demiEnemyList.add(new DemiEnemy());
+		
+		ParsePngFile.parsePNGFile();
+		eList = ParsePngFile.getEntities();
+		for(int i = 0; i<= eList.size() -1; i++)
+		{
+			Log.v("Elist", "Elist Entitty at " + i + " x = " + eList.get(i).getCoordinate().getX() + " y = " + eList.get(i).getCoordinate().getY() + " color" + eList.get(i).getColor().toString());
+		}
+		//Log.v("ppf", "Calling ppf" + (ppf == null));
+		/*ParsePngFile.ParsePngFiles("drawable/Level_01.png");
+		ParsePngFile.ParseFile();*/
 	}
 
 	private void setData()

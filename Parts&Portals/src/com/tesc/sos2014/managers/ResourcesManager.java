@@ -18,6 +18,7 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
+import android.content.Context;
 import android.graphics.Color;
 
 import com.tesc.sos2014.objects.DemiEnemy;
@@ -41,6 +42,7 @@ public class ResourcesManager
 	public MainGameEngineActivity activity;
 	public BoundCamera camera;
 	public VertexBufferObjectManager vbom;
+	public Context context;
 	
 	public Font font;
 	
@@ -140,7 +142,7 @@ public class ResourcesManager
 		FontFactory.setAssetBasePath("font/");
 		mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 35, true, Color.WHITE, 2, Color.BLACK);
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 30, true, Color.WHITE, 2, Color.BLACK);
 		font.load();
 	}
 
@@ -244,6 +246,7 @@ public class ResourcesManager
 		getInstance().activity = activity;
 		getInstance().camera = camera;
 		getInstance().vbom = vbom;
+		//getInstance().context = ctext;
 	}
 	
 	//---------------------------------------------

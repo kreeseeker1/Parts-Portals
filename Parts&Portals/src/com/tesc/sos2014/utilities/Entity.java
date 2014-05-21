@@ -1,18 +1,13 @@
 package com.tesc.sos2014.utilities;
 
-import android.graphics.Color;
-
-
 public class Entity {
 	
 	private Coordinate coordinate;
-	private int pixelColor;
-	private String typeID;
+	private MyColor color;
 	
-	public Entity(Coordinate coordinate, int pixelColor, String typeID) {
+	public Entity(Coordinate coordinate, MyColor color) {
 		this.coordinate = coordinate;
-		this.pixelColor = pixelColor;
-		this.typeID = typeID;
+		this.color = color;
 	}
 
 	public Coordinate getCoordinate() {
@@ -23,22 +18,13 @@ public class Entity {
 		this.coordinate = coordinate;
 	}
 
-	public int getColor() {
-		return pixelColor;
+	public MyColor getColor() {
+		return color;
 	}
 
-	public void setColor(int pixelColor) {
-		this.pixelColor = pixelColor;
-	}
-	
-	
-	public String getTypeID() {
-		return typeID;
+	public void setColor(MyColor color) {
+		this.color = color;
 	}
 
-	public void setTypeID(String typeID) {
-		this.typeID = typeID;
-	}
-	
 	
 }
