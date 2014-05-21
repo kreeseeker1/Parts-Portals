@@ -67,9 +67,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	long oldTime;
 	private int life = 1000;
 	private HUD gameHUD;
-	private Text scoreText;
+	private Text healthText;
 	public Text fuelText;
+	public Text scoreText;
+	//public Text scoreText;
 	public PhysicsWorld physicsWorld;
+	
+	public int score = 0;
 
 	private AnalogOnScreenControl stick;
 
@@ -142,21 +146,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private void setData()
 	{
-		  try
-			{
-			  Log.v("Parser Error Before", "ParserError Before");
-				GDObjects  = ParsePngFile.readImageFile("level/level_1.png");
-				if(GDObjects.size() == 0) {
-					Log.v("size" , "size empty");
-				}
-				else {
-					Log.v("size", "size not empty");
-				}
-				
-			} catch (IOException e)
-			{
-				Log.v("Parser Error", "ParserError");
-				e.printStackTrace();
+		  Log.v("Parser Error Before", "ParserError Before");
+			//GDObjects  = ParsePngFile.readImageFile("level/level_1.png");
+			if(GDObjects.size() == 0) {
+				Log.v("size" , "size empty");
+			}
+			else {
+				Log.v("size", "size not empty");
 			}
 		
 	}
@@ -361,10 +357,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						d.squish();
 						dl.remove();
 						BulletPool.sharedBulletPool().recyclePoolItem(b);
-						// addToScore(-1);
-					} else if (player.collidesWith(d.aSprite) || d.aSprite.collidesWith(player))
+						addToScore(10);
+						scoreText.setText("Score:" + score);
+					}
+					 if( d.aSprite.getY() <= 0)
 					{
-						addToScore(-1);
+						Log.v("SQUISH", "Squish Activated. DEList size: " + DEList.size() + ". demiEnemyCount: " + demiEnemyCount);
+						d.squish();
+						dl.remove();
+					}
+					 if (player.collidesWith(d.aSprite) || d.aSprite.collidesWith(player))
+					{
+						addToLife(-1);
 					}
 
 				}
@@ -600,7 +604,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									{
 										this.setWidth(0);
 										this.setHeight(0);
-										addToScore(100);
+										addToLife(100);
 										this.setVisible(false);
 										this.squish();
 
@@ -820,13 +824,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		gameHUD = new HUD();
 
-		fuelText = new Text(460,450,resourcesManager.font, "Fuel: 00000000 (Recharging)", new TextOptions(HorizontalAlign.RIGHT), getVbom());
-		scoreText = new Text(20, 420, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
+		fuelText = new Text(580,460,resourcesManager.font, "Fuel: 00000000 (Recharging)", new TextOptions(HorizontalAlign.RIGHT), getVbom());
+		healthText = new Text(10, 460, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
+		scoreText = new Text(340,460,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
 		fuelText.setColor(Color.GREEN);
-		fuelText.setScale(.5f);
+		
+		fuelText.setScale(.4f);
+		healthText.setScale(.5f);
+		scoreText.setScale(.5f);
+		
 		scoreText.setAnchorCenter(0, 0);
+		healthText.setAnchorCenter(0, 0);
 		fuelText.setAnchorCenter(0, 0);
-		scoreText.setText("Score: 1000");
+		
+		scoreText.setText("Score:0");
+		healthText.setText("Health: 1000");
 		fuelText.setText("Fuel: 150");
 		
 		
@@ -926,8 +938,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.setTouchAreaBindingOnActionDownEnabled(true);
 		gameHUD.setTouchAreaBindingOnActionMoveEnabled(true);
 
-		gameHUD.attachChild(scoreText);
+		gameHUD.attachChild(healthText);
 		gameHUD.attachChild(fuelText);
+		gameHUD.attachChild(scoreText);
 
 		camera.setHUD(gameHUD);
 	}
@@ -947,17 +960,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		setBackground(new Background(Color.BLACK));
 	}
 
-	private void addToScore(int i)
+	private void addToLife(int i)
 	{
 		if (playerIsDead)
 		{
 			life = 0;
-			scoreText.setText("Life: " + life + "hp");
+			healthText.setText("Life: " + life + "hp");
 		} else
 		{
 			life += i;
-			scoreText.setText("Life: " + life + "hp");
+			healthText.setText("Life: " + life + "hp");
 		}
+	}
+	
+	private void addToScore(int i)
+	{
+		score += i;
 	}
 
 	private void createPhysics()

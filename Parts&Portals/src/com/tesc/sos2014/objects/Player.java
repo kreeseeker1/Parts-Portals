@@ -200,7 +200,7 @@ public abstract class Player extends AnimatedSprite
 							GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 							
 							
-							scene.fuelText.setText(("Fuel: "+ 0 + "(Charging)" ));
+							scene.fuelText.setText(("Fuel:Charging" ));
 							jumpRecharge --;
 							pe.setCenter(-1000, -1000);
 							

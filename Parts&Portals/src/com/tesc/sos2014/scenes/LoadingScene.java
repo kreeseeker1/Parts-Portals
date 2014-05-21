@@ -17,12 +17,14 @@ public class LoadingScene extends BaseScene
 	{
 		//HACK!!!!! May not Work!!!
 		setBackground(new Background(Color.BLACK));
-		attachChild(new Text(400, 240, resourcesManager.font, "Loading Resources...", getVbom()));
+		Text loading = new Text(400, 240, resourcesManager.font, "Loading Resources...", getVbom());
+		//loading.setScale(.3f);
+		attachChild(loading);
 	
 		//HACK!!!!!
 		
 		
-		attachChild(new Text(400, 240, resourcesManager.font, "Loading Resources...", getVbom()));
+		//attachChild(new Text(400, 240, resourcesManager.font, "Loading Resources...", getVbom()));
 	}
 
 	@Override
