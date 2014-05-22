@@ -1,6 +1,7 @@
 package com.tesc.sos2014.scenes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +109,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 
 	public List<Entity> eList;
+	public List<Entity> floorList;
+	public List<Entity> wallList;
+	public List<Entity> itemList;
+	public List<Entity> blackList;
 	public int bulletCount = 0;
 	private Text gameOverText;
 	
@@ -139,37 +144,126 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		Log.v("CreateScene", "CreateScene Started");
 		DEList = new LinkedList<DemiEnemy>();
-		bulletList = new LinkedList<Bullet>();
+		bulletList = new LinkedList<Bullet>();//These two LinkedList Declarations MUST be called right here.
+		itemList = new ArrayList<Entity>();
+		floorList = new ArrayList<Entity>();
+		wallList = new ArrayList<Entity>();
+		blackList = new ArrayList<Entity>();
+		
 		createBackground();
 		createHUD();
 		createPhysics();
+ParsePngFile.parsePNGFile();
+		
+		eList = ParsePngFile.getEntities();
 		//setData();
+		splitList();
+		GenerateMap();
 		loadLevel(1);
-		// GenerateMap(mapNum); = new
 		createGameOverText();
+		
+		
+		
 		setOnSceneTouchListener(this);
 		
-		ParsePngFile.parsePNGFile();
-		eList = ParsePngFile.getEntities();
-		for(int i = 0; i<= eList.size() -1; i++)
+	}
+
+	private void splitList()
+	{
+		
+		//Red:    255,0,0 	  (Item)
+		//Green:  0,255,0 	  (Floor)
+		//Blue:   0,0,255 	  (Wall)
+		//Yellow: 255,255,0   (Item)
+		//Orange: 255,165,0   (Item)
+		//Purple: 128,0,128   (Item)
+		//White:  255,255,255 (Item)
+		//Black:  0,0,0       (EmptySpace)
+		
+		
+		for(int i = 0; i<= eList.size()-1; i++)
 		{
-			Log.v("Elist", "Elist Entitty at " + i + " x = " + eList.get(i).getCoordinate().getX() + " y = " + eList.get(i).getCoordinate().getY() + " color" + eList.get(i).getColor().toString());
+			if(eList.get(i).getColor().getRed() > 0 && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() ==0 )
+			{
+				//Red
+				itemList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() == 0 && eList.get(i).getColor().getGreen() > 0 && eList.get(i).getColor().getBlue() ==0)
+			{
+				//Green
+				floorList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() ==0  && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() > 0)
+			{
+				//Blue
+				wallList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() == 255 && eList.get(i).getColor().getGreen() == 255 && eList.get(i).getColor().getBlue() ==0)
+			{
+				//Yellow
+				Log.v("itemList","Contents of eList.Get(" + i + "): " + eList.get(i));
+				itemList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() ==255 && eList.get(i).getColor().getGreen() == 165 && eList.get(i).getColor().getBlue() ==0)
+			{
+				//Orange
+				itemList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() > 0 && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() ==0)
+			{
+				//Purple
+				itemList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() == 255 && eList.get(i).getColor().getGreen() == 255 && eList.get(i).getColor().getBlue() ==255)
+			{
+				//White
+				itemList.add(eList.get(i));
+			}
+			else if(eList.get(i).getColor().getRed() == 0 && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() ==0)
+			{
+				//Black
+				blackList.add(eList.get(i));
+			}
 		}
-		//Log.v("ppf", "Calling ppf" + (ppf == null));
-		/*ParsePngFile.ParsePngFiles("drawable/Level_01.png");
-		ParsePngFile.ParseFile();*/
+
+		
+		
+	}
+
+	private void GenerateMap()
+	{
+		for(int i = 0; i<= floorList.size()-1;i++)
+		{
+			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+		Sprite s = new Sprite(floorList.get(i).getCoordinate().getX(), floorList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+		PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
+		
+		this.attachChild(s);
+		}
+		
+		for(int i =0; i<= wallList.size()-1;i++)
+		{
+			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+			Sprite s = new Sprite(wallList.get(i).getCoordinate().getX(), wallList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
+			this.attachChild(s);
+		}
+		
+		for(int i=0; i<= itemList.size()-1;i++)
+		{
+			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+			Sprite s = new Sprite(itemList.get(i).getCoordinate().getX(), itemList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
+			this.attachChild(s);
+		}
+		
 	}
 
 	private void setData()
 	{
-		  Log.v("Parser Error Before", "ParserError Before");
-			//GDObjects  = ParsePngFile.readImageFile("level/level_1.png");
-			if(GDObjects.size() == 0) {
-				Log.v("size" , "size empty");
-			}
-			else {
-				Log.v("size", "size not empty");
-			}
+        ParsePngFile.parsePNGFile();
+		
+		eList = ParsePngFile.getEntities();
 		
 	}
 

@@ -73,7 +73,7 @@ public class ParsePngFile {
 								+ "type = " + entities.get(0).getCoordinate().getTypeID());*/
 			}
 		}
-		Log.v("SIZE", "entities size: " + getEntities().size());
+		/*Log.v("SIZE", "entities size: " + getEntities().size());
 		Log.v("ENTITY1", "x =  " + 
 				entities.get(0).getCoordinate().getX()
 				+ "y = " + entities.get(0).getCoordinate().getY()
@@ -87,7 +87,7 @@ public class ParsePngFile {
 		Log.v("ENTITY3", "x =  " + 
 				entities.get(2).getCoordinate().getX()
 				+ "y = " + entities.get(2).getCoordinate().getY()
-				+ "type = " + entities.get(2).getCoordinate().getTypeID());
+				+ "type = " + entities.get(2).getCoordinate().getTypeID());*/
 	}
 
 	public Context getContext() {
