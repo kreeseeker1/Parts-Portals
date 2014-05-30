@@ -235,7 +235,7 @@ ParsePngFile.parsePNGFile();
 		for(int i = 0; i<= floorList.size()-1;i++)
 		{
 			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
-		Sprite s = new Sprite(floorList.get(i).getCoordinate().getX(), floorList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+		Sprite s = new Sprite(floorList.get(i).getCoordinate().getX()*50, floorList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 		PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 		
 		this.attachChild(s);
@@ -244,7 +244,7 @@ ParsePngFile.parsePNGFile();
 		for(int i =0; i<= wallList.size()-1;i++)
 		{
 			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
-			Sprite s = new Sprite(wallList.get(i).getCoordinate().getX(), wallList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+			Sprite s = new Sprite(wallList.get(i).getCoordinate().getX()*50, wallList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 			this.attachChild(s);
 		}
@@ -252,7 +252,7 @@ ParsePngFile.parsePNGFile();
 		for(int i=0; i<= itemList.size()-1;i++)
 		{
 			final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
-			Sprite s = new Sprite(itemList.get(i).getCoordinate().getX(), itemList.get(i).getCoordinate().getY(), ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
+			Sprite s = new Sprite(itemList.get(i).getCoordinate().getX()*50, itemList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 			this.attachChild(s);
 		}

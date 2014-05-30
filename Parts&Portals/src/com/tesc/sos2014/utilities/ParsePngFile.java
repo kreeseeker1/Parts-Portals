@@ -39,31 +39,11 @@ public class ParsePngFile {
 				int greenColor = Color.green(c);
 				int blueColor = Color.blue(c);
 				StringBuilder sb = new StringBuilder();
-				if (redColor == 0 && greenColor == 0 && blueColor == 0) {
-
-				} else {
-					//green color represent platform middle
-					if(redColor == 0 && greenColor == 255 && blueColor ==0) {
-						MyColor color = new MyColor(redColor, greenColor, blueColor);
-						Coordinate coordinate = new Coordinate(x, y, "platformmiddle");
-						Entity entity = new Entity(coordinate, color);
-						entities.add(entity);
-					}
-					//white color represent player
-					else if(redColor == 255 && greenColor == 255 && blueColor == 255) {
-						MyColor color = new MyColor(redColor, greenColor, blueColor);
-						Coordinate coordinate = new Coordinate(x, y, "player");
-						Entity entity = new Entity(coordinate, color);
-						entities.add(entity);
-					}
-					//yellow color represents enemy
-					else if(redColor == 255 && greenColor == 255 && blueColor == 0 ) {
-						MyColor color = new MyColor(redColor, greenColor, blueColor);
-						Coordinate coordinate = new Coordinate(x, y, "enemy");
-						Entity entity = new Entity(coordinate, color);
-						entities.add(entity);
-					}
-				}
+				
+				MyColor color = new MyColor(redColor, greenColor, blueColor);
+				Coordinate coordinate = new Coordinate(x, y);
+				Entity entity = new Entity(coordinate, color);
+				entities.add(entity);
 
 				//Log.v("RGB", sb.toString());
 				

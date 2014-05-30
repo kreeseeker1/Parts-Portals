@@ -4,14 +4,14 @@ public class Coordinate {
 	
 	private int x;
 	private int y;
-	private String typeID;
+
 	
 	//This is the custom Data Structure for holding our Entity
 	
-	public Coordinate(int x, int y, String typeID) {
+	public Coordinate(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.typeID = typeID;
+		
 	}
 
 	public int getX() {
@@ -30,17 +30,11 @@ public class Coordinate {
 		this.y = y;
 	}
 	
-	public String getTypeID() {
-		return typeID;
-	}
-
-	public void setTypeID(String typeID) {
-		this.typeID = typeID;
-	}
+	
 	
 	@Override
 	public String toString() {
-		return "Coordinate x = " + getX() + " - " + "Coordinate y = " + getY() + "Coordinate TypeID = " + getTypeID();
+		return "Coordinate x = " + getX() + " - " + "Coordinate y = " + getY();
 	}
 	
 	
