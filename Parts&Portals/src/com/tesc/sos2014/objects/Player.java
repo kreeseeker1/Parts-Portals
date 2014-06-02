@@ -163,7 +163,7 @@ public abstract class Player extends AnimatedSprite
 					}
 					if (getY() <= 0)
 					{
-						onDie();
+						//onDie();
 					}
 					
 					if(jumping)
@@ -333,5 +333,5 @@ public abstract class Player extends AnimatedSprite
 		footContacts--;
 	}
 
-	public abstract void onDie();
+	//public abstract void onDie();
 }

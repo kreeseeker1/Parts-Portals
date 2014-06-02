@@ -36,7 +36,6 @@ import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
 import org.xml.sax.Attributes;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -52,15 +51,12 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
+import com.tesc.sos2014.objectenemies.FeraalkEnemy;
 import com.tesc.sos2014.objects.Bullet;
-import com.tesc.sos2014.objects.DemiEnemy;
-import com.tesc.sos2014.objects.GameData;
 import com.tesc.sos2014.objects.Health;
-import com.tesc.sos2014.objects.Monkey;
 import com.tesc.sos2014.objects.Player;
 import com.tesc.sos2014.pools.BulletPool;
-import com.tesc.sos2014.pools.DemiEnemyPool;
-
+import com.tesc.sos2014.pools.FeraalkEnemyPool;
 import com.tesc.sos2014.utilities.Entity;
 import com.tesc.sos2014.utilities.ParsePngFile;
 
@@ -101,11 +97,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static GameScene instance;
 
 	private Player player;
-	private DemiEnemy DE;
-	private Monkey enemy;
+	private int playerIndex =0;
+	private FeraalkEnemy DE;
+	
 	private Health health;
 	public LinkedList<Bullet> bulletList ;
-	public LinkedList<DemiEnemy> DEList;
+	public LinkedList<FeraalkEnemy> DEList;
 	
 
 	public List<Entity> eList;
@@ -143,7 +140,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		
 		Log.v("CreateScene", "CreateScene Started");
-		DEList = new LinkedList<DemiEnemy>();
+		DEList = new LinkedList<FeraalkEnemy>();
 		bulletList = new LinkedList<Bullet>();//These two LinkedList Declarations MUST be called right here.
 		itemList = new ArrayList<Entity>();
 		floorList = new ArrayList<Entity>();
@@ -159,7 +156,7 @@ ParsePngFile.parsePNGFile();
 		//setData();
 		splitList();
 		GenerateMap();
-		loadLevel(1);
+		//loadLevel(1);
 		createGameOverText();
 		
 		
@@ -217,7 +214,10 @@ ParsePngFile.parsePNGFile();
 			else if(eList.get(i).getColor().getRed() == 255 && eList.get(i).getColor().getGreen() == 255 && eList.get(i).getColor().getBlue() ==255)
 			{
 				//White
-				itemList.add(eList.get(i));
+				//itemList.add(eList.get(i));
+				playerIndex = i;
+				
+				
 			}
 			else if(eList.get(i).getColor().getRed() == 0 && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() ==0)
 			{
@@ -256,6 +256,20 @@ ParsePngFile.parsePNGFile();
 			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 			this.attachChild(s);
 		}
+		
+		
+		
+		player = new Player(eList.get(playerIndex).getCoordinate().getX(), eList.get(playerIndex).getCoordinate().getY(), getVbom(), camera, physicsWorld)
+		{
+			
+		};
+		MassData data = new MassData();
+		data.mass = 2000f;
+
+		player.body.setMassData(data);
+		
+		this.attachChild(player);
+		camera.setChaseEntity(player);
 		
 	}
 
@@ -334,7 +348,7 @@ ParsePngFile.parsePNGFile();
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	public void attachDemiEnemy(DemiEnemy de)
+	public void attachDemiEnemy(FeraalkEnemy de)
 	{
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
@@ -401,48 +415,7 @@ ParsePngFile.parsePNGFile();
 	//====================================================================================
 	
 	
-	public void generateMap(LinkedList<GameData> gd)
-	{
-		Iterator<GameData> gada = gd.iterator();
-		
-		while(gada.hasNext())
-		{
-			GameData g = gada.next();
-			if(g.getTypeID() == "Player")	
-			{
-				player = new Player(g.getX(), g.getY(), getVbom(), camera, physicsWorld)
-				{
 
-					@Override
-					public void onDie()
-					{
-						if (!gameOverDisplayed)
-						{
-							displayGameOverText();
-						}
-						this.body.setActive(false);// removes body
-						this.setPosition(2000, 1000);// causes
-														// enemies
-														// to run to
-														// different
-														// part of
-														// screen
-						// this.detachSelf(); //This works I think
-						// by setting your x,y to 0,0
-					}
-				};
-				
-			}
-			else if(g.getTypeID() == "BaseEnemy" )
-			{
-				
-			}
-		}
-		
-		
-		
-	}
-	
 
 	// ==========================================================================================================================================
 	// ATTACH BLOCK END
@@ -453,14 +426,14 @@ ParsePngFile.parsePNGFile();
 		synchronized (this)
 		{
 			Iterator<Bullet> it = bulletList.iterator();
-			Iterator<DemiEnemy> dl = DEList.iterator();
+			Iterator<FeraalkEnemy> dl = DEList.iterator();
 			while (it.hasNext())
 			{
 				Bullet b = (Bullet) it.next();
 
 				while (dl.hasNext())
 				{
-					DemiEnemy d = (DemiEnemy) dl.next();
+					FeraalkEnemy d = (FeraalkEnemy) dl.next();
 					if (d.aSprite.collidesWith(b.sprite) || b.sprite.collidesWith(d.aSprite))
 					{
 						Log.v("SQUISH", "Squish Activated. DEList size: " + DEList.size() + ". demiEnemyCount: " + demiEnemyCount);
@@ -509,13 +482,13 @@ ParsePngFile.parsePNGFile();
 
 			while (dl.hasNext())
 			{
-				DemiEnemy d = (DemiEnemy) dl.next();
+				FeraalkEnemy d = (FeraalkEnemy) dl.next();
 
 				if (d.isDead())
 				{
 
 					d.aSprite.setVisible(false);
-					DemiEnemyPool.sharedDemiEnemyPool().recyclePoolItem(d);
+					FeraalkEnemyPool.sharedDemiEnemyPool().recyclePoolItem(d);
 				} else if (!d.isDead())
 				{
 					if (d.aSprite.getX() - 230 < player.getX())
@@ -751,7 +724,7 @@ ParsePngFile.parsePNGFile();
 						player = new Player(x, y, getVbom(), camera, physicsWorld)
 							{
 
-								@Override
+								/*@Override
 								public void onDie()
 								{
 									if (!gameOverDisplayed)
@@ -760,14 +733,14 @@ ParsePngFile.parsePNGFile();
 									}
 									this.body.setActive(false);// removes body
 									this.setPosition(2000, 1000);// causes
-																	// enemies
+*/																	// enemies
 																	// to run to
 																	// different
 																	// part of
 																	// screen
 									// this.detachSelf(); //This works I think
 									// by setting your x,y to 0,0
-								}
+								//}
 							};
 						MassData data = new MassData();
 						data.mass = 2000f;
@@ -780,7 +753,7 @@ ParsePngFile.parsePNGFile();
 					{
 
 						// Log.v("Demi Enemy Added " , "Creating DemiEnemy");
-						DE = DemiEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
+						DE = FeraalkEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
 						// Log.v("Demi Enemy Added 2" , "Creating DemiEnemy");
 
 						DE.aSprite.setPosition(x, y);
@@ -879,7 +852,7 @@ ParsePngFile.parsePNGFile();
 						 * enemy.setSize(75, 50); enemy.setSpeed((int)
 						 * (Math.random() * 15));
 						 */
-						DemiEnemy de2 = new DemiEnemy();
+						FeraalkEnemy de2 = new FeraalkEnemy();
 
 						de2.aSprite.setUserData(ResourcesManager.getInstance().bullet);
 

@@ -11,9 +11,9 @@ import android.util.Log;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
-import com.tesc.sos2014.objects.DemiEnemy;
+import com.tesc.sos2014.objectenemies.FeraalkEnemy;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
-import com.tesc.sos2014.pools.DemiEnemyPool;
+import com.tesc.sos2014.pools.FeraalkEnemyPool;
 import com.tesc.sos2014.scenes.GameScene;
 
 public class DemiESpawner
@@ -43,7 +43,7 @@ public class DemiESpawner
 			
 			
 
-			DemiEnemy DE = DemiEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
+			FeraalkEnemy DE = FeraalkEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
 			
 
 			DE.aSprite.setPosition(x, y);

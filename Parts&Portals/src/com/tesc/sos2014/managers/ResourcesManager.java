@@ -21,7 +21,7 @@ import org.andengine.util.debug.Debug;
 import android.content.Context;
 import android.graphics.Color;
 
-import com.tesc.sos2014.objects.DemiEnemy;
+import com.tesc.sos2014.objectenemies.FeraalkEnemy;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 //import com.sos2014.GameActivity;
 
