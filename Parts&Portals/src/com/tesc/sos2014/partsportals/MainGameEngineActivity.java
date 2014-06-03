@@ -37,7 +37,7 @@ public class MainGameEngineActivity extends BaseGameActivity
 	public EngineOptions onCreateEngineOptions()
 	{
 		instance = this;
-		camera = new BoundCamera(0, 0, 900, 580);
+		camera = new BoundCamera(0, 0, 800, 480);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), this.camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 		engineOptions.getRenderOptions().getConfigChooserOptions().setRequestedMultiSampling(true);

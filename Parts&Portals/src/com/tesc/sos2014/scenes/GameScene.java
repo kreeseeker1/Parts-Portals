@@ -69,6 +69,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private Text healthText;
 	public Text fuelText;
 	public Text scoreText;
+	
+	public Text xText;
+	public Text yText;
 	//public Text scoreText;
 	public PhysicsWorld physicsWorld;
 	
@@ -102,14 +105,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private Health health;
 	public LinkedList<Bullet> bulletList ;
-	public LinkedList<FeraalkEnemy> DEList;
+	public ArrayList<FeraalkEnemy> feraalkList;
 	
 
+	//Entity Lists
 	public List<Entity> eList;
 	public List<Entity> floorList;
 	public List<Entity> wallList;
 	public List<Entity> itemList;
 	public List<Entity> blackList;
+	
+	//Sprite Lists
+	public List<Sprite> floorSpriteList;
+	public List<Sprite> wallSpriteList;
+	public List<Sprite> itemSpriteList;
+	
 	public int bulletCount = 0;
 	private Text gameOverText;
 	
@@ -140,24 +150,31 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		
 		Log.v("CreateScene", "CreateScene Started");
-		DEList = new LinkedList<FeraalkEnemy>();
+		
 		bulletList = new LinkedList<Bullet>();//These two LinkedList Declarations MUST be called right here.
+		
 		itemList = new ArrayList<Entity>();
 		floorList = new ArrayList<Entity>();
 		wallList = new ArrayList<Entity>();
 		blackList = new ArrayList<Entity>();
 		
+		feraalkList = new ArrayList<FeraalkEnemy>();
+		
+		floorSpriteList = new ArrayList<Sprite>();
+		wallSpriteList = new ArrayList<Sprite>();
+		itemSpriteList = new ArrayList<Sprite>();
+		
 		createBackground();
 		createHUD();
 		createPhysics();
-ParsePngFile.parsePNGFile();
+		ParsePngFile.parsePNGFile();
 		
 		eList = ParsePngFile.getEntities();
 		//setData();
 		splitList();
 		GenerateMap();
 		//loadLevel(1);
-		createGameOverText();
+	//	createGameOverText();
 		
 		
 		
@@ -238,6 +255,8 @@ ParsePngFile.parsePNGFile();
 		Sprite s = new Sprite(floorList.get(i).getCoordinate().getX()*50, floorList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 		PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 		
+		floorSpriteList.add(s);
+		
 		this.attachChild(s);
 		}
 		
@@ -247,6 +266,8 @@ ParsePngFile.parsePNGFile();
 			Sprite s = new Sprite(wallList.get(i).getCoordinate().getX()*50, wallList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 			this.attachChild(s);
+			
+			wallSpriteList.add(s);
 		}
 		
 		for(int i=0; i<= itemList.size()-1;i++)
@@ -255,21 +276,38 @@ ParsePngFile.parsePNGFile();
 			Sprite s = new Sprite(itemList.get(i).getCoordinate().getX()*50, itemList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());	
 			PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 			this.attachChild(s);
+			
+			itemSpriteList.add(s);
 		}
 		
 		
 		
-		player = new Player(eList.get(playerIndex).getCoordinate().getX(), eList.get(playerIndex).getCoordinate().getY(), getVbom(), camera, physicsWorld)
+		player = new Player((float)eList.get(playerIndex).getCoordinate().getX()*50,(float) eList.get(playerIndex).getCoordinate().getY()*50 , getVbom(), camera, physicsWorld)
 		{
 			
 		};
-		MassData data = new MassData();
-		data.mass = 2000f;
+		
+		/*player= new Player(0,0,getVbom(),camera,physicsWorld)
+			{
+				
+			};*/
+		//Log.v("","");
+		Log.v("Coordinate X","" + eList.get(playerIndex).getCoordinate().getX());
+		Log.v("Coordinate Y","" + eList.get(playerIndex).getCoordinate().getY());
+		camera.setCenter(player.getX() , player.getY());
+		Log.v("Camera X","" + camera.getCenterX());
+		Log.v("Camera Y","" + camera.getCenterY());
+		//MassData data = new MassData();
+		//data.mass = 200f;
 
-		player.body.setMassData(data);
+		//player.body.setMassData(data);
 		
 		this.attachChild(player);
 		camera.setChaseEntity(player);
+		Log.v("Player X","" + player.getX());
+		Log.v("Player Y","" + player.getY());
+		
+		//camera.setCenter(player.getX(), player.getY());
 		
 	}
 
@@ -348,7 +386,7 @@ ParsePngFile.parsePNGFile();
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	public void attachDemiEnemy(FeraalkEnemy de)
+	public void attachFeraalkEnemy(FeraalkEnemy de)
 	{
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
@@ -363,9 +401,9 @@ ParsePngFile.parsePNGFile();
 
 		try
 		{
-			DEList.add(DE);
+			feraalkList.add(DE);
 			// this.DEList.add(de);
-			Log.v("DEMI ENEMY LIST COUNT", "#" + DEList.size());
+			Log.v("DEMI ENEMY LIST COUNT", "#" + feraalkList.size());
 			this.attachChild(de.aSprite);
 		} catch (NullPointerException jnpe)
 		{
@@ -425,31 +463,57 @@ ParsePngFile.parsePNGFile();
 	{
 		synchronized (this)
 		{
+			//Player
+			xText.setText("X: " + player.getX());
+			yText.setText("Y: " + player.getY());
+			
+			Log.v("PLayer X","" + player.getX());
+			Log.v("Player Y","" + player.getY());
+			
+			Log.v("Camera X","" + camera.getCenterX());
+			Log.v("Camera Y","" + camera.getCenterY());
+			
+			Iterator<Sprite> fsl = floorSpriteList.iterator();
+			while(fsl.hasNext())
+			{
+				if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 < player.getY())
+				{
+					player.rechargeJets();
+				}
+				/*else if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 != player.getY())
+				{
+					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
+				}*/
+			}
+			
+			
+			
+			//Enemies and Bullets
 			Iterator<Bullet> it = bulletList.iterator();
-			Iterator<FeraalkEnemy> dl = DEList.iterator();
+			Iterator<FeraalkEnemy> dl = feraalkList.iterator();
 			while (it.hasNext())
 			{
 				Bullet b = (Bullet) it.next();
 
 				while (dl.hasNext())
 				{
-					FeraalkEnemy d = (FeraalkEnemy) dl.next();
-					if (d.aSprite.collidesWith(b.sprite) || b.sprite.collidesWith(d.aSprite))
+					FeraalkEnemy fe = (FeraalkEnemy) dl.next();
+					if (fe.aSprite.collidesWith(b.sprite) || b.sprite.collidesWith(fe.aSprite))
 					{
-						Log.v("SQUISH", "Squish Activated. DEList size: " + DEList.size() + ". demiEnemyCount: " + demiEnemyCount);
-						d.squish();
+						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
+						fe.squish();
 						dl.remove();
 						BulletPool.sharedBulletPool().recyclePoolItem(b);
 						addToScore(10);
 						scoreText.setText("Score:" + score);
 					}
-					 if( d.aSprite.getY() <= 0)
+					 if( fe.aSprite.getY() <= 0)
 					{
-						Log.v("SQUISH", "Squish Activated. DEList size: " + DEList.size() + ". demiEnemyCount: " + demiEnemyCount);
-						d.squish();
+						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
+						fe.squish();
 						dl.remove();
 					}
-					 if (player.collidesWith(d.aSprite) || d.aSprite.collidesWith(player))
+					 if (player.collidesWith(fe.aSprite) || fe.aSprite.collidesWith(player))
 					{
 						addToLife(-1);
 					}
@@ -546,8 +610,8 @@ ParsePngFile.parsePNGFile();
 	public void disposeScene()
 	{
 		camera.setHUD(null);
-		camera.setChaseEntity(null);
-		camera.setCenter(400, 240);
+		//camera.setChaseEntity(null);
+		//camera.setCenter(400, 240);
 		//Bullet Activity continues like normal after a GameScene -> Menu -> GameScene reset, but the sprites are not reinitialized.
 		//bulletList.clear();
 
@@ -768,7 +832,7 @@ ParsePngFile.parsePNGFile();
 						Log.v("Demi Enemy Add ", "Demi Enemy Count Size: " + demiEnemyCount);
 						demiEnemyCount++;
 
-						attachDemiEnemy(DE);
+						attachFeraalkEnemy(DE);
 						// Log.v("Demi Enemy Add " , "Demi Enemy List Size: " +
 						// demiEnemyList.size());
 						// demiEnemyList.add(DE);
@@ -910,7 +974,13 @@ ParsePngFile.parsePNGFile();
 		fuelText = new Text(580,460,resourcesManager.font, "Fuel: 00000000 (Recharging)", new TextOptions(HorizontalAlign.RIGHT), getVbom());
 		healthText = new Text(10, 460, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
 		scoreText = new Text(340,460,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
+		
+		xText = new Text(340,360,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
+		yText = new Text(340,260,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
+		
 		fuelText.setColor(Color.GREEN);
+		scoreText.setColor(0, 0, 100);
+		healthText.setColor(100, 0, 0);
 		
 		fuelText.setScale(.4f);
 		healthText.setScale(.5f);
@@ -924,6 +994,8 @@ ParsePngFile.parsePNGFile();
 		healthText.setText("Health: 1000");
 		fuelText.setText("Fuel: 150");
 		
+		xText.setText("X: " );
+		xText.setText("Y: " );
 		
 
 		stick = new AnalogOnScreenControl(75f, camera.getHeight() - 300, camera, ResourcesManager.getInstance().control_base_region.deepCopy(), ResourcesManager.getInstance().bullet.deepCopy(), .1f, getVbom(), new IAnalogOnScreenControlListener()
@@ -1024,6 +1096,9 @@ ParsePngFile.parsePNGFile();
 		gameHUD.attachChild(healthText);
 		gameHUD.attachChild(fuelText);
 		gameHUD.attachChild(scoreText);
+		
+		gameHUD.attachChild(xText);
+		gameHUD.attachChild(yText);
 
 		camera.setHUD(gameHUD);
 	}
@@ -1040,7 +1115,7 @@ ParsePngFile.parsePNGFile();
 
 	private void createBackground()
 	{
-		setBackground(new Background(Color.BLACK));
+		setBackground(new Background(Color.CYAN));
 	}
 
 	private void addToLife(int i)

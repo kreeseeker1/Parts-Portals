@@ -2,6 +2,7 @@ package com.tesc.sos2014.managers;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.BoundCamera;
+import org.andengine.entity.IEntity;
 import org.andengine.entity.scene.background.IBackground;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -15,6 +16,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtla
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -58,6 +60,7 @@ public class ResourcesManager
 	public ITextureRegion control_base_region;
 	
 	ITexture mainFontTexture = null;
+	TextureRegion gbg ;
 	
 	// Game Texture
 	public BuildableBitmapTextureAtlas gameTextureAtlas;
@@ -72,7 +75,7 @@ public class ResourcesManager
 	public ITextureRegion bullet;
 	public ITextureRegion jetfire;
 	
-	public IBackground gamebackground;
+	public IEntity gamebackground;
 	
 	
 /*	public ITextureRegion platform2_region;
@@ -158,7 +161,7 @@ public class ResourcesManager
        //	platform1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform1.png");
        	
     // gamebackground. = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "background_texture.png");
-       	
+         gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "backgroundtexture.png");
         control_base_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "controlBase.png");
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         jetfire = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "jetfire.png");

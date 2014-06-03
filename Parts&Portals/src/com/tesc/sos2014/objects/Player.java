@@ -70,7 +70,7 @@ public abstract class Player extends AnimatedSprite
 		{
 			super(pX, pY, com.tesc.sos2014.managers.ResourcesManager.getInstance().player_region.deepCopy(), vbo);
 			createPhysics(camera, physicsWorld);
-			camera.setChaseEntity(this);
+		//	camera.setChaseEntity(this);
 			
 			//jetfire();
 		}
@@ -136,14 +136,32 @@ public abstract class Player extends AnimatedSprite
 	{
 		this.isParticleSpawned = isParticleSpawned;
 	}
+	
+	public void rechargeJets()
+	{
+		
+	GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
+	if(jumpTimer < fuelLevel)
+	{
+	jumpTimer ++;
+	}
+	
+	
+	scene.fuelText.setText(("Fuel: "+ jumpTimer));
+}
 
 
 
 	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
 	{
+		setSize(54,54);
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
+		
 		as = new AnimatedSprite(mHeight, mHeight, ResourcesManager.getInstance().player_region.deepCopy(), MainGameEngineActivity.getSharedInstance().getSharedInstance().getVertexBufferObjectManager());
 
+		
+		setSize(60,60);
+	//not used yet	as.setSize(100,100);
 		body.setUserData(as);
 		body.setFixedRotation(true);
 

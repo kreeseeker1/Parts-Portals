@@ -57,7 +57,7 @@ public class DemiESpawner
 			
 			scene.demiEnemyCount++;
 
-			scene.attachDemiEnemy(DE);
+			scene.attachFeraalkEnemy(DE);
 			
 			//Get Enemy from Pool
 			//Attach to Scene
