@@ -12,11 +12,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 
-public class EthsersEnemy
+public class EthsersEnemy extends BaseEnemy
 {
 
-	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+	final long[] ENEMY_ANIMATE = new long[] { 100, 100 };
 	public Body body;
+	public int maxMovement = 200;
 	private boolean goRight = false;
 	private boolean goLeft = false;
 	private int footContacts = 0;
@@ -28,12 +29,11 @@ public class EthsersEnemy
 	private boolean isDead = false;
 
 
-	public EthsersEnemy()
+	public EthsersEnemy(float x, float y)
 		{
 
-			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy, MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
-			aSprite.setSize(50, 45);
-			aSprite.animate(ENEMY_ANIMATE);
+			super(ResourcesManager.getInstance().ethsers.deepCopy(), new long[]{100,100});
+			aSprite.setPosition(x,y);
 		}
 
 	public int getLife()
@@ -52,62 +52,6 @@ public class EthsersEnemy
 	}
 
 
-	/*private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
-	{
-		body = PhysicsFactory.createBoxBody(physicsWorld, aSprite, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-53, 0, 0));
-		// dynamic bodies can collide with each other and kinematic and static
-		// bodies
-
-		body.setUserData("enemy"); // Set the sprite image
-		body.setFixedRotation(false); // wont tumble I assume
-	}*/
-		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(aSprite, body, true, false)
-			{
-				@Override
-				public void onUpdate(float pSecondsElapsed)
-				{
-
-					super.onUpdate(pSecondsElapsed);// This is very important to
-													// be in this exact spot
-					// camera.onUpdate(0.1f);
-
-					if (aSprite.getY() <= 0) // Body falls below bottom of scene
-					{
-						onDie();
-					}
-
-					if (goRight)
-					{
-						// super.onUpdate(pSecondsElapsed);
-						body.setLinearVelocity(new Vector2(speed, body.getLinearVelocity().y));// with
-																								// the
-																								// speed
-																								// of
-																								// 3
-																								// move
-																								// right
-						// I think that this is where we could add code to get
-						// the character to face the right direction
-						// animate(ENEMY_ANIMATE, 0, 2,true);
-					}
-					if (goLeft)
-					{
-						// super.onUpdate(pSecondsElapsed);
-						body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));// with
-																								// the
-																								// speed
-																								// f
-																								// 3
-																								// move
-																								// left
-						// I think that this is where we could add code to get
-						// the character to face the right direction
-						// animate(ENEMY_ANIMATE, 0, 2, true);
-					}
-				}
-			});
-	}*/
-
 	public void runRight()
 	{
 		body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));// with
@@ -116,7 +60,7 @@ public class EthsersEnemy
 		goLeft = false;
 		
 		aSprite.setFlippedHorizontal(false);
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		
 
 	}
 
@@ -127,14 +71,13 @@ public class EthsersEnemy
 		goRight = false;
 		goLeft = true;
 		aSprite.setFlippedHorizontal(true);
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
-		// animate(ENEMY_ANIMATE, 0, 2, true);
+		
 
 	}
 	
 	public void animateMe()
 	{
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+		
 	}
 
 	public int getSpeed()
@@ -149,12 +92,11 @@ public class EthsersEnemy
 
 	public void jump()
 	{
-		if (footContacts < 1)
-		{
+		
 			body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
 			return;
-		}
-		//body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
+		
+		
 	}
 
 	public void squish()

@@ -302,7 +302,7 @@ public abstract class Player extends AnimatedSprite
 		b.sprite.detachSelf();
 		
 		scene.bulletCount++;
-		scene.bulletList.add(b);
+		//scene.bulletList.add(b);
 		scene.attachBullet(b);	
 
 	}

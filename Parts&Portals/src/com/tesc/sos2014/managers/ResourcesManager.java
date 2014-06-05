@@ -39,6 +39,7 @@ public class ResourcesManager
 	
 	private BitmapTextureAtlas splashTextureAtlas;
 	private BuildableBitmapTextureAtlas menuTextureAtlas;
+	BitmapTextureAtlas backgroundTextureAtlas ;
 	
 	public Engine engine;
 	public MainGameEngineActivity activity;
@@ -60,7 +61,7 @@ public class ResourcesManager
 	public ITextureRegion control_base_region;
 	
 	ITexture mainFontTexture = null;
-	TextureRegion gbg ;
+	public TextureRegion gbg ;
 	
 	// Game Texture
 	public BuildableBitmapTextureAtlas gameTextureAtlas;
@@ -87,6 +88,11 @@ public class ResourcesManager
 	public ITiledTextureRegion enemy;
 	public ITiledTextureRegion enemyl;
 	
+	
+	public ITiledTextureRegion berius;
+	public ITiledTextureRegion beriusl;
+	public ITiledTextureRegion scrich;
+	public ITiledTextureRegion ethsers;
 	
 	
 	// Level Complete Window
@@ -156,12 +162,13 @@ public class ResourcesManager
 		//
 		
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+		// backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048,TextureOptions.BILINEAR);
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-        
+        backgroundTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 4000, 4000);
        //	platform1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform1.png");
        	
     // gamebackground. = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "background_texture.png");
-         gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "backgroundtexture.png");
+     //   gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "backgroundtexture.png",0,0);colum
         control_base_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "controlBase.png");
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         jetfire = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "jetfire.png");
@@ -177,6 +184,11 @@ public class ResourcesManager
         
         enemy = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "ess1.png", 3, 1);
         enemyl = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "ess1r.png", 3, 1);
+        
+        ethsers = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "ethsers.png", 2, 1);
+        berius = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "berius.png", 3, 1);
+        beriusl = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "beriusl.png", 3, 1);
+        scrich = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "scrich.png", 3, 1);
         
      /*   complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "levelCompleteWindow.png");
         complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "star.png", 2, 1);*/

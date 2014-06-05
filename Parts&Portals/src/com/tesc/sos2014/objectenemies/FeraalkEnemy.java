@@ -19,6 +19,7 @@ public class FeraalkEnemy
 	public Body body;
 	private boolean goRight = false;
 	private boolean goLeft = false;
+	private boolean canJump = true;
 	private int footContacts = 0;
 	private int life = 100;
 	public int speed = 10;
@@ -31,7 +32,8 @@ public class FeraalkEnemy
 	public FeraalkEnemy()
 		{
 
-			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy, MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			
+			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
 			aSprite.setSize(50, 45);
 			aSprite.animate(ENEMY_ANIMATE);
 		}
@@ -134,7 +136,8 @@ public class FeraalkEnemy
 	
 	public void animateMe()
 	{
-		final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+			aSprite.animate(ENEMY_ANIMATE);
+		//final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	}
 
 	public int getSpeed()
@@ -149,12 +152,12 @@ public class FeraalkEnemy
 
 	public void jump()
 	{
-		if (footContacts < 1)
+		if (canJump)
 		{
 			body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
 			return;
 		}
-		//body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
+		
 	}
 
 	public void squish()

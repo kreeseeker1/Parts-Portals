@@ -19,6 +19,9 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.background.ParallaxBackground;
+import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -27,6 +30,8 @@ import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.TextureOptions;
+import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
@@ -51,10 +56,15 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.managers.SceneManager;
 import com.tesc.sos2014.managers.SceneManager.SceneType;
+import com.tesc.sos2014.objectenemies.BeriusEnemy;
+import com.tesc.sos2014.objectenemies.BeriusLEnemy;
+import com.tesc.sos2014.objectenemies.EthsersEnemy;
 import com.tesc.sos2014.objectenemies.FeraalkEnemy;
+import com.tesc.sos2014.objectenemies.ScrichBossEnemy;
 import com.tesc.sos2014.objects.Bullet;
 import com.tesc.sos2014.objects.Health;
 import com.tesc.sos2014.objects.Player;
+import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 import com.tesc.sos2014.pools.BulletPool;
 import com.tesc.sos2014.pools.FeraalkEnemyPool;
 import com.tesc.sos2014.utilities.Entity;
@@ -105,7 +115,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private Health health;
 	public LinkedList<Bullet> bulletList ;
+	
+	
 	public ArrayList<FeraalkEnemy> feraalkList;
+	public ArrayList<BeriusEnemy> beriusList;
+	public ArrayList<EthsersEnemy> ethsersList;
+	public ArrayList<BeriusLEnemy> beriusLList;
+	public ArrayList<ScrichBossEnemy> scrichList;
 	
 
 	//Entity Lists
@@ -114,6 +130,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public List<Entity> wallList;
 	public List<Entity> itemList;
 	public List<Entity> blackList;
+	public List<Entity> enemyList;
 	
 	//Sprite Lists
 	public List<Sprite> floorSpriteList;
@@ -152,13 +169,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		Log.v("CreateScene", "CreateScene Started");
 		
 		bulletList = new LinkedList<Bullet>();//These two LinkedList Declarations MUST be called right here.
-		
+		//BulletPool.sharedBulletPool().batchAllocatePoolItems(50);
 		itemList = new ArrayList<Entity>();
 		floorList = new ArrayList<Entity>();
 		wallList = new ArrayList<Entity>();
 		blackList = new ArrayList<Entity>();
+		enemyList = new ArrayList<Entity>();
 		
 		feraalkList = new ArrayList<FeraalkEnemy>();
+		ethsersList = new ArrayList<EthsersEnemy>();
 		
 		floorSpriteList = new ArrayList<Sprite>();
 		wallSpriteList = new ArrayList<Sprite>();
@@ -185,7 +204,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private void splitList()
 	{
 		
-		//Red:    255,0,0 	  (Item)
+		//Red:    255,0,0 	  (Enemy)
 		//Green:  0,255,0 	  (Floor)
 		//Blue:   0,0,255 	  (Wall)
 		//Yellow: 255,255,0   (Item)
@@ -200,7 +219,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			if(eList.get(i).getColor().getRed() > 0 && eList.get(i).getColor().getGreen() == 0 && eList.get(i).getColor().getBlue() ==0 )
 			{
 				//Red
-				itemList.add(eList.get(i));
+				
+				
+				enemyList.add(eList.get(i));
 			}
 			else if(eList.get(i).getColor().getRed() == 0 && eList.get(i).getColor().getGreen() > 0 && eList.get(i).getColor().getBlue() ==0)
 			{
@@ -282,6 +303,46 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		
 		
+		
+		for(int i=0; i<= enemyList.size()-1;i++)
+		{
+		if(enemyList.get(i).getColor().getRed() == 255)
+		{
+			FeraalkEnemy fe = new FeraalkEnemy();
+			fe.aSprite = new AnimatedSprite(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().enemy.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+		//	fe.aSprite.setPosition();
+			
+			
+			//feraalkList.add(fe);
+			attachFeraalkEnemy(fe);
+		}
+		else if(enemyList.get(i).getColor().getRed() == 254)
+		{
+			EthsersEnemy e = new EthsersEnemy(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
+			e.aSprite =  new AnimatedSprite(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().enemy.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			
+			attachEthsersEnemy(e, enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
+		}
+		else if(enemyList.get(i).getColor().getRed() == 253)
+		{
+			
+		}
+		else if(enemyList.get(i).getColor().getRed() == 252)
+		{
+			
+		}
+		else if(enemyList.get(i).getColor().getRed() == 251)
+		{
+			
+		}
+		}
+		
+		
+		
+		
+		
+		
+		
 		player = new Player((float)eList.get(playerIndex).getCoordinate().getX()*50,(float) eList.get(playerIndex).getCoordinate().getY()*50 , getVbom(), camera, physicsWorld)
 		{
 			
@@ -297,10 +358,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setCenter(player.getX() , player.getY());
 		Log.v("Camera X","" + camera.getCenterX());
 		Log.v("Camera Y","" + camera.getCenterY());
-		//MassData data = new MassData();
-		//data.mass = 200f;
+		MassData data = new MassData();
+		data.mass = 200f;
 
-		//player.body.setMassData(data);
+		player.body.setMassData(data);
 		
 		this.attachChild(player);
 		camera.setChaseEntity(player);
@@ -379,6 +440,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		Log.v("Bullet Pos", "PLayerX: " + player.getX());
 		Log.v("Bullet Pos", "BulletX: " + b.sprite.getX());
 
+		Log.v("Bullet ADDED", "Bullet set to visible ");
+		b.sprite.setVisible(true);
+		bulletList.add(b);
 		this.attachChild(b.sprite);
 	}
 
@@ -388,6 +452,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	public void attachFeraalkEnemy(FeraalkEnemy de)
 	{
+			de.aSprite.setSize(45, 50);
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
 		de.body.setActive(true);
@@ -398,8 +463,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 		de.aSprite.setSize(75, 50);
 		de.animateMe();
+		
+		Log.v("DE ", "DE to string " + de.
+				aSprite.
+				toString());
+		feraalkList.add(de);
+		this.attachChild(de.aSprite);
 
-		try
+		/*try
 		{
 			feraalkList.add(DE);
 			// this.DEList.add(de);
@@ -408,9 +479,37 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		} catch (NullPointerException jnpe)
 		{
 			Log.v("NPE", jnpe.toString());
-		}
+		}*/
 
 	}
+	
+	public void attachEthsersEnemy(final EthsersEnemy e, final float x ,float y)
+		{
+			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+		
+			e.body = PhysicsFactory.createBoxBody(physicsWorld, e.aSprite, BodyType.KinematicBody, fd);
+			e.body.setLinearVelocity(-1*5, 0);
+			physicsWorld.registerPhysicsConnector(new PhysicsConnector(e.aSprite,e.body,true,false)
+				{
+					 @Override
+					    public void onUpdate(float pSecondsElapsed)
+					    {
+					        super.onUpdate(pSecondsElapsed);
+					               
+					        if (e.aSprite.getX() <= x - e.maxMovement)
+					        {
+					            e.body.setLinearVelocity(e.body.getLinearVelocity().x * -1, 0);
+					        }
+					        if (e.aSprite.getX() >= x + e.maxMovement)
+					        {
+					            e.body.setLinearVelocity(e.body.getLinearVelocity().x * -1, 0);
+					        }
+					    }
+				}
+					);
+			ethsersList.add(e);
+			attachChild(e.aSprite);
+		}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -464,8 +563,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		synchronized (this)
 		{
 			//Player
-			xText.setText("X: " + player.getX());
-			yText.setText("Y: " + player.getY());
+		//	xText.setText("X: " + player.getX());
+		//	yText.setText("Y: " + player.getY());
 			
 			Log.v("PLayer X","" + player.getX());
 			Log.v("Player Y","" + player.getY());
@@ -480,29 +579,56 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 					player.rechargeJets();
 				}
-				/*else if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 != player.getY())
+				else if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 != player.getY())
 				{
 					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
-				}*/
+				}
 			}
 			
 			
 			
 			//Enemies and Bullets
-			Iterator<Bullet> it = bulletList.iterator();
-			Iterator<FeraalkEnemy> dl = feraalkList.iterator();
-			while (it.hasNext())
+			Iterator<Bullet> bl = bulletList.iterator();
+			Log.v("BULLET", "Bullet count: " + bulletList.size());
+			Log.v("Feraalk ", "Feraalk Count: " + feraalkList.size());
+			Iterator<FeraalkEnemy> fel = feraalkList.iterator();
+			while (bl.hasNext())
 			{
-				Bullet b = (Bullet) it.next();
-
-				while (dl.hasNext())
+				Bullet b = (Bullet) bl.next();
+				
+				
+				for(int i =0; i<= feraalkList.size()-1;i++)
 				{
-					FeraalkEnemy fe = (FeraalkEnemy) dl.next();
-					if (fe.aSprite.collidesWith(b.sprite) || b.sprite.collidesWith(fe.aSprite))
+					FeraalkEnemy fe = feraalkList.get(i);
+					if(feraalkList.get(i).aSprite.collidesWith(b.sprite))
+					{
+						
+					}
+				}
+
+				while (fel.hasNext())
+				{
+					FeraalkEnemy fe = (FeraalkEnemy) fel.next();
+					
+					Log.v("BL", "BL HasNext: " + bl.hasNext());
+					Log.v("DEL", "DEL HasNext" + fel.hasNext());
+					Log.v("FE ", "FE to string " + fe.
+							aSprite.
+							toString());
+					
+					
+					if (fe
+							.aSprite
+							.collidesWith
+							(b.sprite)  )
+					{
+						
+					}
+					if(b.sprite.collidesWith(fe.aSprite))
 					{
 						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
 						fe.squish();
-						dl.remove();
+						fel.remove();
 						BulletPool.sharedBulletPool().recyclePoolItem(b);
 						addToScore(10);
 						scoreText.setText("Score:" + score);
@@ -511,7 +637,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					{
 						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
 						fe.squish();
-						dl.remove();
+						fel.remove();
 					}
 					 if (player.collidesWith(fe.aSprite) || fe.aSprite.collidesWith(player))
 					{
@@ -530,7 +656,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					Log.v("Children", "Number of Children" + this.getChildCount());
 
 					BulletPool.sharedBulletPool().recyclePoolItem(b);
-					it.remove();
+					bl.remove();
 					continue;
 				} else
 				{
@@ -544,10 +670,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			// //////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			while (dl.hasNext())
+			if(fel != null)
 			{
-				FeraalkEnemy d = (FeraalkEnemy) dl.next();
+				
+			
+			while (fel.hasNext())
+			{
+				FeraalkEnemy d = (FeraalkEnemy) fel.next();
 
+				if(d != null)
+				{
 				if (d.isDead())
 				{
 
@@ -574,10 +706,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 				}
 			}
+			}
 			// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// ////////////////////////////////////////////////////////End AI
 			// Loop
 			// //////////////////////////////////////////////////////////////////////////////
+		}
 		}
 	}
 
@@ -1097,8 +1231,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.attachChild(fuelText);
 		gameHUD.attachChild(scoreText);
 		
-		gameHUD.attachChild(xText);
-		gameHUD.attachChild(yText);
+		//gameHUD.attachChild(xText);
+		//gameHUD.attachChild(yText);
 
 		camera.setHUD(gameHUD);
 	}
@@ -1115,7 +1249,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private void createBackground()
 	{
-		setBackground(new Background(Color.CYAN));
+			//BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(ResourcesManager.getInstance(), width * columns, height * rows, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+			
+			/*ParallaxBackground background = new ParallaxBackground(0, 0, 0);
+		    background.attachParallaxEntity(new ParallaxEntity(0, new Sprite(0, 0, ResourcesManager.getInstance().gbg, getVbom())));
+		    setBackground(background);*/
+			
+			setBackground(new Background(Color.BLACK));
 	}
 
 	private void addToLife(int i)
