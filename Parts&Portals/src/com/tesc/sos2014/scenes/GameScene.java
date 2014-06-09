@@ -122,6 +122,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public ArrayList<BeriusEnemy> beriusList;
 	public ArrayList<EthsersEnemy> ethsersList;
 	public ArrayList<EthsersHiveMind> ethsersHiveList;
+	public ArrayList<BeriusLEnemy> beriusLEnemyList;
+
 	
 	public ArrayList<BeriusLEnemy> beriusLList;
 	public ArrayList<ScrichBossEnemy> scrichList;
@@ -182,7 +184,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		feraalkList = new ArrayList<FeraalkEnemy>();
 		ethsersList = new ArrayList<EthsersEnemy>();
 		ethsersHiveList = new ArrayList<EthsersHiveMind>();
-		
+		beriusList = new ArrayList<BeriusEnemy>();
+		beriusLEnemyList = new ArrayList<BeriusLEnemy>();
+		scrichList = new ArrayList<ScrichBossEnemy>();
 		
 		floorSpriteList = new ArrayList<Sprite>();
 		wallSpriteList = new ArrayList<Sprite>();
@@ -331,11 +335,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		}
 		else if(enemyList.get(i).getColor().getRed() == 253)
 		{
+			BeriusLEnemy bel = new BeriusLEnemy(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
+			bel.aSprite = new AnimatedSprite(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().beriusl.deepCopy(),MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			bel.aSprite.setSize(55, 55);
 			
+			attachBeriusLeader(bel, enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50 );
 		}
 		else if(enemyList.get(i).getColor().getRed() == 252)
 		{
+			ScrichBossEnemy s = new ScrichBossEnemy();
 			
+			attachScrich(s , enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
 		}
 		else if(enemyList.get(i).getColor().getRed() == 251)
 		{
@@ -458,25 +468,25 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	public void attachFeraalkEnemy(FeraalkEnemy de)
+	public void attachFeraalkEnemy(FeraalkEnemy fe)
 	{
-			de.aSprite.setSize(45, 50);
+			fe.aSprite.setSize(45, 50);
 		FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
-		de.body = PhysicsFactory.createCircleBody(physicsWorld, de.aSprite, BodyType.DynamicBody, fd);
-		de.body.setActive(true);
+		fe.body = PhysicsFactory.createCircleBody(physicsWorld, fe.aSprite, BodyType.DynamicBody, fd);
+		fe.body.setActive(true);
 
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(de.aSprite, de.body, true, false));
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(fe.aSprite, fe.body, true, false));
 
-		de.body.setUserData(de.aSprite);
+		fe.body.setUserData(fe.aSprite);
 
-		de.aSprite.setSize(75, 50);
-		de.animateMe();
+		fe.aSprite.setSize(75, 50);
+		fe.animateMe();
 		
-		Log.v("DE ", "DE to string " + de.
+		Log.v("DE ", "DE to string " + fe.
 				aSprite.
 				toString());
-		feraalkList.add(de);
-		this.attachChild(de.aSprite);
+		feraalkList.add(fe);
+		this.attachChild(fe.aSprite);
 
 		/*try
 		{
@@ -491,12 +501,87 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	}
 	
+	public void attachScrich(ScrichBossEnemy s, float x, float y)
+		{
+			MassData data = new MassData();
+			data.mass = 8000f;
+			
+			s.aSprite = new AnimatedSprite(x,y,ResourcesManager.getInstance().scrich, getVbom());
+			
+			s.aSprite.setSize(190, 190);
+			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+			s.body = PhysicsFactory.createCircleBody(physicsWorld, s.aSprite, BodyType.DynamicBody, fd);
+			s.body.setActive(true);
+			s.body.setMassData(data);
+			
+			physicsWorld.registerPhysicsConnector(new PhysicsConnector(s.aSprite, s.body, true, false));
+			s.body.setUserData(s.aSprite);
+			s.aSprite.setSize(200, 200);
+			s.aSprite.animate(s.SCRICH_ANIMATE);
+			
+			scrichList.add(s);
+			attachChild(s.aSprite);
+			
+			
+		}
+	
+	public void attachBeriusLeader(final BeriusLEnemy bel, final float x, final float y)
+		{
+			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
+			MassData data = new MassData();
+			data.mass = 4000f;
+			
+			
+			
+			bel.aSprite = new AnimatedSprite(x,y,ResourcesManager.getInstance().beriusl.deepCopy(),getVbom());
+			bel.aSprite.setSize(45, 45);
+			bel.body = PhysicsFactory.createCircleBody(physicsWorld, bel.aSprite, BodyType.DynamicBody, fd);
+			
+			physicsWorld.registerPhysicsConnector(new PhysicsConnector(bel.aSprite, bel.body, true, false));
+			 
+			bel.body.setUserData(bel.aSprite);
+			bel.aSprite.setSize(50, 50);
+			//bel.body.setMassData(data);
+			bel.aSprite.animate(bel.BL_ANIMATE);
+			bel.pace();
+			
+			beriusLEnemyList.add(bel);
+			
+			for(int i=0; i<= 10;i++)
+			{
+				
+				 final BeriusEnemy be1 = new BeriusEnemy();
+				 be1.myleader = beriusLEnemyList.indexOf(bel);
+					be1.aSprite =  new AnimatedSprite(x+10*i,y+10*i, ResourcesManager.getInstance().berius.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+					be1.aSprite.setSize(40,40);
+					
+					be1.body = PhysicsFactory.createCircleBody(physicsWorld, be1.aSprite, BodyType.DynamicBody, fd);
+					
+					//physicsWorld.registerPhysicsConnector(new PhysicsConnector(be1.aSprite, be1.body, true, false));
+					physicsWorld.registerPhysicsConnector(new PhysicsConnector(be1.aSprite, be1.body, true, false));
+					//e1.body.setLinearVelocity(-1*5, 0);
+					be1.aSprite.animate(bel.BL_ANIMATE);
+					be1.aSprite.setSize(45, 45);
+					beriusList.add(be1);
+					be1.pace();
+					
+					attachChild(be1.aSprite);
+			}
+			
+			attachChild(bel.aSprite);
+			
+			
+			
+			
+			
+		}
+	
 	public void attachEthsersHive(final EthsersHiveMind e, final float x ,float y)
 		{
 			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		
-			e.body = PhysicsFactory.createBoxBody(physicsWorld, e.aSprite, BodyType.KinematicBody, fd);
-			e.body.setLinearVelocity(-1*5, 0);
+			e.body = PhysicsFactory.createCircleBody(physicsWorld, e.aSprite, BodyType.KinematicBody, fd);
+			//e.body.setLinearVelocity(-1*5, 0);
 			e.aSprite.animate(e.ENEMY_ANIMATE);
 			physicsWorld.registerPhysicsConnector(new PhysicsConnector(e.aSprite,e.body,true,false)
 				{
@@ -525,7 +610,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				e1.aSprite =  new AnimatedSprite(x-10*i,y+10*i, ResourcesManager.getInstance().ethsers.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
 				e1.aSprite.setSize(5, 5);
 				
-				e1.body = PhysicsFactory.createBoxBody(physicsWorld, e1.aSprite, BodyType.DynamicBody, fd);
+				e1.body = PhysicsFactory.createCircleBody(physicsWorld, e1.aSprite, BodyType.DynamicBody, fd);
 				physicsWorld.registerPhysicsConnector(new PhysicsConnector(e1.aSprite, e1.body, true, false));
 				//e1.body.setLinearVelocity(-1*5, 0);
 				e1.aSprite.animate(e.ENEMY_ANIMATE);
@@ -645,10 +730,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					yText.setText("Floor Y " + fsl.next().getY()/50);
 					player.rechargeJets();
 				}
-			/*	else if(player.collidesWith(fsl.next()) && fsl.next().getY()/50 > player.getY())
-				{
-					//Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
-				}*/
+		
 			}
 			
 			
@@ -657,7 +739,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			{
 				if(player.collidesWith(floorSpriteList.get(i)) && floorSpriteList.get(i).getY() / 50 < player.getY() + 20)
 				{
-					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
+					
 					//xText.setText("Player Y" + player.getY()/50);
 					//yText.setText("Floor Y " + floorSpriteList.get(i).getY()/50);
 					player.rechargeJets();
@@ -678,19 +760,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			Log.v("BULLET", "Bullet count: " + bulletList.size());
 			Log.v("Feraalk ", "Feraalk Count: " + feraalkList.size());
 			Iterator<FeraalkEnemy> fel = feraalkList.iterator();
+			Iterator<EthsersEnemy> ee = ethsersList.iterator();
+			Iterator<BeriusEnemy> be = beriusList.iterator();
+			Iterator<BeriusLEnemy> bel = beriusLEnemyList.iterator();
 			while (bl.hasNext())
 			{
 				Bullet b = (Bullet) bl.next();
 				
-				
-				for(int i =0; i<= feraalkList.size()-1;i++)
+				while(ee.hasNext())
 				{
-					FeraalkEnemy fe = feraalkList.get(i);
-					if(feraalkList.get(i).aSprite.collidesWith(b.sprite))
+					EthsersEnemy e =  (EthsersEnemy)ee.next();
+					
+					if(b.sprite.collidesWith(e.aSprite))
 					{
-						
+						Log.v("SQUISH", "Squish Activated. Ethserslist size: " + ethsersList.size());
+						e.squish();
+						ee.remove();
+						b.bulletBody.setTransform(-1000, -1000, 0);
+						BulletPool.sharedBulletPool().recyclePoolItem(b);
+						addToScore(10);
+						scoreText.setText("Score:" + score);
+					}	
+					
+					if(player.collidesWith(e.aSprite) || e.aSprite.collidesWith(player))
+					{
+						addToLife(-2);
 					}
 				}
+				
+				
 
 				while (fel.hasNext())
 				{
@@ -698,18 +796,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					
 					Log.v("BL", "BL HasNext: " + bl.hasNext());
 					Log.v("DEL", "DEL HasNext" + fel.hasNext());
-					Log.v("FE ", "FE to string " + fe.
-							aSprite.
-							toString());
+					Log.v("FE ", "FE to string " + fe.aSprite.toString());
 					
-					
-					if (fe
-							.aSprite
-							.collidesWith
-							(b.sprite)  )
-					{
-						
-					}
 					if(b.sprite.collidesWith(fe.aSprite))
 					{
 						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
@@ -801,6 +889,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				fe.pace();	
 				}
 			}
+				
+			}
+			
+			while(bel.hasNext())
+			{
+				BeriusLEnemy bel1 = bel.next();
+				
+				if(!bel1.isDead())
+				{
+					bel1.pace();
+				}
+			}
+			
+			while(be.hasNext())
+			{
+				BeriusEnemy be1 = be.next() ;
+				if(be1.isDead())
+				{
+					
+				}
+				else if(!be1.isDead() && beriusList.size() > 1)
+				{
+					Log.v("BE BERIUS" , " Berius size: " + beriusList.size());
+					be1.pace();
+				}
+				else
+				{
+					Log.v("BE BERIUS" , " Berius size: " + beriusList.size());
+				}
 			}
 			// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// ////////////////////////////////////////////////////////End AI

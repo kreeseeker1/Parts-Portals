@@ -16,11 +16,13 @@ import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 public class ScrichBossEnemy extends BaseEnemy
 {
 
+		public long[] SCRICH_ANIMATE = new long[] {100,100,100};
+		
 	public ScrichBossEnemy()
 		{
 			
 			super(ResourcesManager.getInstance().scrich.deepCopy(), new long[] {100,100,100});
-			ENEMY_ANIMATE = new long[] {100,100,100};
+		//	ENEMY_ANIMATE = new long[] {100,100,100};
 			// TODO Auto-generated constructor stub
 		}
 
