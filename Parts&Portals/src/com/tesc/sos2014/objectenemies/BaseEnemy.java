@@ -21,6 +21,8 @@ public class BaseEnemy
 	public int jumpert = 100;
 	public AnimatedSprite aSprite;
 	
+	public int runRight,runLeft = 50;
+	
 	private boolean isDead = false;
 
 
@@ -94,6 +96,25 @@ public class BaseEnemy
 		//body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
 	}
 
+	public void pace()
+		{
+			if(runLeft > 0)
+			{
+				runLeft();
+				runLeft --;
+			}
+			if(runLeft <= 0 && runRight > 0)
+			{
+				runRight();
+				runRight --;
+			}
+			if(runLeft <=0 && runRight <= 0)
+			{
+				runLeft = 50;
+				runRight = 50;
+			}
+		}
+	
 	public void squish()
 	{
 		body.setActive(false);
