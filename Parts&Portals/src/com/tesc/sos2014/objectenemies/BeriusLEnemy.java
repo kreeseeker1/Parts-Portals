@@ -1,13 +1,15 @@
 package com.tesc.sos2014.objectenemies;
 
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
-public class BeriusLEnemy extends BeriusEnemy
+import com.tesc.sos2014.managers.ResourcesManager;
+
+public class BeriusLEnemy extends BaseEnemy
 	{
-		public long[] BL_ANIMATE ={100,100,100};
 
-	public BeriusLEnemy(float x, float y)
+	public BeriusLEnemy()
 		{
-			super(x,y);
+			super(ResourcesManager.getInstance().beriusl.deepCopy(), new long[] {100,100,100});
 			
 			
 		}
