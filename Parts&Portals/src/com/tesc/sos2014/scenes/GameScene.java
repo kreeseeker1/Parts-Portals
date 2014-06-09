@@ -529,7 +529,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				physicsWorld.registerPhysicsConnector(new PhysicsConnector(e1.aSprite, e1.body, true, false));
 				//e1.body.setLinearVelocity(-1*5, 0);
 				e1.aSprite.animate(e.ENEMY_ANIMATE);
-				e1.aSprite.setSize(20, 20);
+				e1.aSprite.setSize(40, 40);
 				ethsersList.add(e1);
 				
 		
