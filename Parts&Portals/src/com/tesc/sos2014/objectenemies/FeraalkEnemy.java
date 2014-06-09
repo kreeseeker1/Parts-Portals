@@ -1,5 +1,7 @@
 package com.tesc.sos2014.objectenemies;
 
+import java.util.Random;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -19,6 +21,10 @@ public class FeraalkEnemy
 	public Body body;
 	private boolean goRight = false;
 	private boolean goLeft = false;
+	
+	Random r = new Random();
+	private int runRight = r.nextInt(50);
+	private int runLeft = r.nextInt(50);
 	private boolean canJump = true;
 	private int footContacts = 0;
 	private int life = 100;
@@ -139,6 +145,25 @@ public class FeraalkEnemy
 			aSprite.animate(ENEMY_ANIMATE);
 		//final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	}
+	
+	public void pace()
+		{
+			if(runLeft > 0)
+			{
+				runLeft();
+				runLeft --;
+			}
+			if(runLeft <= 0 && runRight > 0)
+			{
+				runRight();
+				runRight --;
+			}
+			if(runLeft <=0 && runRight <= 0)
+			{
+				runLeft = 50;
+				runRight = 50;
+			}
+		}
 
 	public int getSpeed()
 	{

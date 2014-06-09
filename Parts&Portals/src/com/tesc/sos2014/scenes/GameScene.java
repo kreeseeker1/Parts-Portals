@@ -154,7 +154,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	public List<Entity> GDObjects;
 	
-	//GDObjects = PNGParser.ParseMap("Level1.png");
+
 
 	public GameScene()
 		{
@@ -557,7 +557,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	// ==========================================================================================================================================
 	// ATTACH BLOCK END
 	// ==========================================================================================================================================
-
+	
+	
+	//*******************************************************************************************************************************************
+	// POOL/LOOP LOGIC BLOCK START
+	//*******************************************************************************************************************************************
 	public void cleaner()
 	{
 		synchronized (this)
@@ -573,17 +577,37 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			Log.v("Camera Y","" + camera.getCenterY());
 			
 			Iterator<Sprite> fsl = floorSpriteList.iterator();
-			while(fsl.hasNext())
-			{
-				if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 < player.getY())
+			//while(fsl.hasNext())
+			{/*
+				if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 < player.getY() + 20)
 				{
+					xText.setText("Player Y" + player.getY());
+					yText.setText("Floor Y " + fsl.next().getY()/50);
 					player.rechargeJets();
 				}
-				else if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 != player.getY())
+				else if(player.collidesWith(fsl.next()) && fsl.next().getY()/50 > player.getY())
 				{
 					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
 				}
+			*/}
+			
+			for(int i= 0; i<= floorSpriteList.size()-1;i++)
+			{
+				if(player.collidesWith(floorSpriteList.get(i)) && floorSpriteList.get(i).getY() / 50 < player.getY() + 20)
+				{
+					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
+					//xText.setText("Player Y" + player.getY()/50);
+					//yText.setText("Floor Y " + floorSpriteList.get(i).getY()/50);
+					player.rechargeJets();
+					return;
+				}
+				else if(player.collidesWith(floorSpriteList.get(i)) && floorSpriteList.get(i).getY() / 50 > player.getY() - 20)
+				{
+					return;
+				}
+				Log.v("rechargeJets","I: " + i );
 			}
+			
 			
 			
 			
@@ -629,6 +653,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
 						fe.squish();
 						fel.remove();
+						b.bulletBody.setTransform(-1000, -1000, 0);
 						BulletPool.sharedBulletPool().recyclePoolItem(b);
 						addToScore(10);
 						scoreText.setText("Score:" + score);
@@ -655,6 +680,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					Log.v("Cleaner", "Bullet Removed.");
 					Log.v("Children", "Number of Children" + this.getChildCount());
 
+					b.bulletBody.setTransform(-1000, -1000, 0);
 					BulletPool.sharedBulletPool().recyclePoolItem(b);
 					bl.remove();
 					continue;
@@ -676,34 +702,41 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			
 			while (fel.hasNext())
 			{
-				FeraalkEnemy d = (FeraalkEnemy) fel.next();
+				FeraalkEnemy fe = (FeraalkEnemy) fel.next();
 
-				if(d != null)
+				if(fe != null)
 				{
-				if (d.isDead())
+				if (fe.isDead())
 				{
 
-					d.aSprite.setVisible(false);
-					FeraalkEnemyPool.sharedDemiEnemyPool().recyclePoolItem(d);
-				} else if (!d.isDead())
-				{
-					if (d.aSprite.getX() - 230 < player.getX())
+					fe.aSprite.setVisible(false);
+					FeraalkEnemyPool.sharedDemiEnemyPool().recyclePoolItem(fe);
+				} 
+				else if (!fe.isDead())
+				{/*//fe.aSprite.getX() - 230 > player.getX() || fe.aSprite.getX() + 230 < player.getX()
+					if(fe.aSprite.getX() - 230 > player.getX() || fe.aSprite.getX() + 230 < player.getX())
 					{
-						d.runLeft();
-					} else if (d.aSprite.getX() + 230 > player.getX())
-					{
-						d.runRight();
+						fe.pace();
 					}
-					if (d.jumpert <= 0 && player.getY() > d.aSprite.getY())
+					else if (fe.aSprite.getX() - 230 > player.getX())
+					{
+						fe.runLeft();
+					} else if (fe.aSprite.getX() + 230 > player.getX())
+					{
+						fe.runRight();
+					}
+					if (fe.jumpert <= 0 && player.getY() > fe.aSprite.getY())
 					{
 
-						d.jump(); //
-						d.jumpert = 100;
-					} else if (d.jumpert > 0)
+						fe.jump(); //
+						fe.jumpert = 100;
+					} else if (fe.jumpert > 0)
 					{
-						d.jumpert = d.jumpert - 10;
+						fe.jumpert = fe.jumpert - 10;
 					}
 
+				*/
+				fe.pace();	
 				}
 			}
 			}
@@ -714,6 +747,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		}
 		}
 	}
+	
+	//*******************************************************************************************************************************************
+		// POOL/LOOP LOGIC BLOCK END
+		//*******************************************************************************************************************************************
 
 	public static GameScene getSharedInstance()
 	{
@@ -1109,8 +1146,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		healthText = new Text(10, 460, resourcesManager.font, "Life: 0123456789", new TextOptions(HorizontalAlign.LEFT), getVbom());
 		scoreText = new Text(340,460,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
 		
-		xText = new Text(340,360,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
-		yText = new Text(340,260,resourcesManager.font, "Score:00000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
+		xText = new Text(340,360,resourcesManager.font, "Score:0000000000000000000000000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
+		yText = new Text(340,260,resourcesManager.font, "Score:0000000000000000000000000000", new TextOptions(HorizontalAlign.CENTER),getVbom());
 		
 		fuelText.setColor(Color.GREEN);
 		scoreText.setColor(0, 0, 100);
@@ -1232,7 +1269,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.attachChild(scoreText);
 		
 		//gameHUD.attachChild(xText);
-		//gameHUD.attachChild(yText);
+	//	gameHUD.attachChild(yText);
 
 		camera.setHUD(gameHUD);
 	}
