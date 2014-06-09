@@ -59,6 +59,7 @@ import com.tesc.sos2014.managers.SceneManager.SceneType;
 import com.tesc.sos2014.objectenemies.BeriusEnemy;
 import com.tesc.sos2014.objectenemies.BeriusLEnemy;
 import com.tesc.sos2014.objectenemies.EthsersEnemy;
+import com.tesc.sos2014.objectenemies.EthsersHiveMind;
 import com.tesc.sos2014.objectenemies.FeraalkEnemy;
 import com.tesc.sos2014.objectenemies.ScrichBossEnemy;
 import com.tesc.sos2014.objects.Bullet;
@@ -120,6 +121,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public ArrayList<FeraalkEnemy> feraalkList;
 	public ArrayList<BeriusEnemy> beriusList;
 	public ArrayList<EthsersEnemy> ethsersList;
+	public ArrayList<EthsersHiveMind> ethsersHiveList;
+	
 	public ArrayList<BeriusLEnemy> beriusLList;
 	public ArrayList<ScrichBossEnemy> scrichList;
 	
@@ -178,6 +181,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		feraalkList = new ArrayList<FeraalkEnemy>();
 		ethsersList = new ArrayList<EthsersEnemy>();
+		ethsersHiveList = new ArrayList<EthsersHiveMind>();
+		
 		
 		floorSpriteList = new ArrayList<Sprite>();
 		wallSpriteList = new ArrayList<Sprite>();
@@ -318,10 +323,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		}
 		else if(enemyList.get(i).getColor().getRed() == 254)
 		{
-			EthsersEnemy e = new EthsersEnemy(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
-			e.aSprite =  new AnimatedSprite(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().enemy.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			EthsersHiveMind e = new EthsersHiveMind(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
+			e.aSprite =  new AnimatedSprite(enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50, ResourcesManager.getInstance().ethsers.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+			e.aSprite.setSize(10, 10);
 			
-			attachEthsersEnemy(e, enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
+			attachEthsersHive(e, enemyList.get(i).getCoordinate().getX()*50,enemyList.get(i).getCoordinate().getY()*50);
 		}
 		else if(enemyList.get(i).getColor().getRed() == 253)
 		{
@@ -371,6 +377,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		//camera.setCenter(player.getX(), player.getY());
 		
 	}
+
+	
 
 	private void setData()
 	{
@@ -483,12 +491,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	}
 	
-	public void attachEthsersEnemy(final EthsersEnemy e, final float x ,float y)
+	public void attachEthsersHive(final EthsersHiveMind e, final float x ,float y)
 		{
 			FixtureDef fd = PhysicsFactory.createFixtureDef(1, 0.1f, 0.5f);
 		
 			e.body = PhysicsFactory.createBoxBody(physicsWorld, e.aSprite, BodyType.KinematicBody, fd);
 			e.body.setLinearVelocity(-1*5, 0);
+			e.aSprite.animate(e.ENEMY_ANIMATE);
 			physicsWorld.registerPhysicsConnector(new PhysicsConnector(e.aSprite,e.body,true,false)
 				{
 					 @Override
@@ -507,7 +516,33 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					    }
 				}
 					);
-			ethsersList.add(e);
+			
+			
+			
+			for(int i =0; i<= 20;i++)
+			{
+				 final EthsersEnemy e1 = new EthsersEnemy();
+				e1.aSprite =  new AnimatedSprite(x-10*i,y+10*i, ResourcesManager.getInstance().ethsers.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
+				e1.aSprite.setSize(5, 5);
+				
+				e1.body = PhysicsFactory.createBoxBody(physicsWorld, e1.aSprite, BodyType.DynamicBody, fd);
+				physicsWorld.registerPhysicsConnector(new PhysicsConnector(e1.aSprite, e1.body, true, false));
+				//e1.body.setLinearVelocity(-1*5, 0);
+				e1.aSprite.animate(e.ENEMY_ANIMATE);
+				e1.aSprite.setSize(20, 20);
+				ethsersList.add(e1);
+				
+		
+				
+				
+				attachChild(e1.aSprite);
+				
+			}
+			
+			
+			
+			
+			ethsersHiveList.add(e);
 			attachChild(e.aSprite);
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -576,22 +611,49 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			Log.v("Camera X","" + camera.getCenterX());
 			Log.v("Camera Y","" + camera.getCenterY());
 			
+			
+			for(int i=0; i<=ethsersList.size()-1;i++)
+			{
+				Log.v("EthsersList", "Loop # " + i);
+				if(ethsersList.get(i).aSprite.getX() < ethsersHiveList.get(0).aSprite.getX()-10)
+				{
+					Log.v("EthsersList", "Running Left");
+					ethsersList.get(i).runLeft();
+				}
+				else if(ethsersList.get(i).aSprite.getX()  > ethsersHiveList.get(0).aSprite.getX() + 10)
+				{
+					Log.v("EthsersList", "Running right");
+					ethsersList.get(i).runRight();
+				}
+				
+				if(ethsersList.get(i).aSprite.getY()  < ethsersHiveList.get(0).aSprite.getY() - 10
+						)
+				{
+					Log.v("EthsersList", "Jumping");
+					ethsersList.get(i).jump();
+				}
+			}
+			
+			
+			
 			Iterator<Sprite> fsl = floorSpriteList.iterator();
-			//while(fsl.hasNext())
-			{/*
+			while(fsl.hasNext())
+			{
 				if(player.collidesWith(fsl.next()) && fsl.next().getY() / 50 < player.getY() + 20)
 				{
 					xText.setText("Player Y" + player.getY());
 					yText.setText("Floor Y " + fsl.next().getY()/50);
 					player.rechargeJets();
 				}
-				else if(player.collidesWith(fsl.next()) && fsl.next().getY()/50 > player.getY())
+			/*	else if(player.collidesWith(fsl.next()) && fsl.next().getY()/50 > player.getY())
 				{
-					Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
-				}
-			*/}
+					//Log.v("rechargeJets","player Y: " + player.getY() + " floor Y: " + fsl.next().getY() );
+				}*/
+			}
 			
-			for(int i= 0; i<= floorSpriteList.size()-1;i++)
+			
+			//This code works just like the above code but produced a noticeable lag
+			/*for(int i= 0; i<= floorSpriteList.size()-1;i++)
 			{
 				if(player.collidesWith(floorSpriteList.get(i)) && floorSpriteList.get(i).getY() / 50 < player.getY() + 20)
 				{
@@ -606,7 +668,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					return;
 				}
 				Log.v("rechargeJets","I: " + i );
-			}
+			}*/
 			
 			
 			

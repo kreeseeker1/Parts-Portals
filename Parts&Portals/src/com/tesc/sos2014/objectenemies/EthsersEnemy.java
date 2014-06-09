@@ -15,7 +15,7 @@ import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 public class EthsersEnemy extends BaseEnemy
 {
 
-	final long[] ENEMY_ANIMATE = new long[] { 100, 100 };
+	public final long[] ENEMY_ANIMATE = new long[] { 100, 100 };
 	public Body body;
 	public int maxMovement = 200;
 	private boolean goRight = false;
@@ -26,14 +26,24 @@ public class EthsersEnemy extends BaseEnemy
 	public int jumpert = 100;
 	public AnimatedSprite aSprite;
 	
+	public float x,y;
+	
 	private boolean isDead = false;
 
 
 	public EthsersEnemy(float x, float y)
 		{
 
+			
 			super(ResourcesManager.getInstance().ethsers.deepCopy(), new long[]{100,100});
-			aSprite.setPosition(x,y);
+			this.x =x;
+			this.y =y;
+			//aSprite.setPosition(x,y);
+		}
+	
+	public EthsersEnemy()
+		{
+			super(ResourcesManager.getInstance().ethsers.deepCopy(), new long[]{100,100});
 		}
 
 	public int getLife()
