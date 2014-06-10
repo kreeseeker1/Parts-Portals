@@ -18,6 +18,7 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
@@ -561,7 +562,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					physicsWorld.registerPhysicsConnector(new PhysicsConnector(be1.aSprite, be1.body, true, false));
 					//e1.body.setLinearVelocity(-1*5, 0);
 					be1.aSprite.animate(bel.BL_ANIMATE);
-					be1.aSprite.setSize(45, 45);
+					be1.aSprite.setSize(50, 50);
 					beriusList.add(be1);
 					be1.pace();
 					
@@ -757,8 +758,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			
 			//Enemies and Bullets
 			Iterator<Bullet> bl = bulletList.iterator();
-			Log.v("BULLET", "Bullet count: " + bulletList.size());
-			Log.v("Feraalk ", "Feraalk Count: " + feraalkList.size());
+			
+			
+			
 			Iterator<FeraalkEnemy> fel = feraalkList.iterator();
 			Iterator<EthsersEnemy> ee = ethsersList.iterator();
 			Iterator<BeriusEnemy> be = beriusList.iterator();
@@ -774,9 +776,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				}
 			}
 			
+			
+			
+			
+			//?????????????????????????????????????????????????????????????????????????????????????????????????????????????
+			//BULLET LOOP START
+			//?????????????????????????????????????????????????????????????????????????????????????????????????????????????
 			while (bl.hasNext())
 			{
 				Bullet b = (Bullet) bl.next();
+				
+				
 				
 				while(ee.hasNext())
 				{
@@ -797,6 +807,54 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					{
 						addToLife(-2);
 					}
+				}
+				
+				while(be.hasNext())
+				{
+					BeriusEnemy ber = be.next();
+					
+					if(b.sprite.collidesWith(ber.aSprite))
+					{
+						ber.squish();
+						be.remove();
+						b.bulletBody.setTransform(-1000, -1000, 0);
+						BulletPool.sharedBulletPool().recyclePoolItem(b);
+						addToScore(5);
+						scoreText.setText("Score:" + score);
+					}
+					if(player.collidesWith(ber.aSprite) || ber.aSprite.collidesWith(player))
+					{
+						addToLife(-1);
+					}
+					if(beriusLEnemyList.get(ber.myleader).aSprite.collidesWith(ber.aSprite))
+					{
+						ber.jump();
+					}
+				}
+				
+				while(bel.hasNext())
+				{
+					
+					BeriusLEnemy berl = bel.next();
+					int leaderIndex = beriusLEnemyList.indexOf(berl);
+					if(b.sprite.collidesWith(berl.aSprite) )
+					{
+						berl.squish();
+						bel.remove();
+						b.bulletBody.setTransform(-1000, -1000, 0);
+						BulletPool.sharedBulletPool().recyclePoolItem(b);
+						addToScore(15);
+						scoreText.setText("Score:" + score);
+						for(int i=0; i<= beriusList.size()-1;i++)
+						{
+							if(beriusList.get(i).myleader == leaderIndex)
+							{
+								beriusList.get(i).myleader =0;
+							}
+						}
+						
+					}
+					
 				}
 				
 				
@@ -832,8 +890,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 				}
 
-				// Log.v("NO SQUISH" , "Squish Not Called EVER in main loop " +
-				// DEList.size());
+				
 				b.setNewX(b.sprite.getX());
 
 				if (b.bulletLife <= 0 || b.sprite.getY() <= -b.sprite.getHeight() || !camera.isEntityVisible(b.sprite) || (b.getOldX() == b.getNewX())) // )
@@ -853,6 +910,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					continue;
 				}
 			}
+
+			//?????????????????????????????????????????????????????????????????????????????????????????????????????????????
+			//BULLET LOOP STOP
+			//?????????????????????????????????????????????????????????????????????????????????????????????????????????????
+			
+			
+			
+			
+			
+			
+			
 			// ////////////////////////////////////Begin AI Loop
 			// //////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -874,30 +942,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					FeraalkEnemyPool.sharedDemiEnemyPool().recyclePoolItem(fe);
 				} 
 				else if (!fe.isDead())
-				{/*//fe.aSprite.getX() - 230 > player.getX() || fe.aSprite.getX() + 230 < player.getX()
-					if(fe.aSprite.getX() - 230 > player.getX() || fe.aSprite.getX() + 230 < player.getX())
+				{
+					if(player.getX() < fe.aSprite.getX()-250 || player.getX() > fe.aSprite.getX() + 250 )//&& player.getY() < fe.aSprite.getY() + 100 )
 					{
-						fe.pace();
+					fe.pace();
 					}
-					else if (fe.aSprite.getX() - 230 > player.getX())
+					else
 					{
-						fe.runLeft();
-					} else if (fe.aSprite.getX() + 230 > player.getX())
-					{
-						fe.runRight();
+						if(player.getX() > fe.aSprite.getX() - 250)
+						{
+							fe.runLeft();
+						}
+						else if(player.getX() < fe.aSprite.getX() + 250)
+						{
+							fe.runRight();
+						}
 					}
-					if (fe.jumpert <= 0 && player.getY() > fe.aSprite.getY())
-					{
-
-						fe.jump(); //
-						fe.jumpert = 100;
-					} else if (fe.jumpert > 0)
-					{
-						fe.jumpert = fe.jumpert - 10;
-					}
-
-				*/
-				fe.pace();	
 				}
 			}
 				
@@ -1476,13 +1536,30 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private void createBackground()
 	{
-			//BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(ResourcesManager.getInstance(), width * columns, height * rows, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-			
-			/*ParallaxBackground background = new ParallaxBackground(0, 0, 0);
-		    background.attachParallaxEntity(new ParallaxEntity(0, new Sprite(0, 0, ResourcesManager.getInstance().gbg, getVbom())));
-		    setBackground(background);*/
-			
-			setBackground(new Background(Color.BLACK));
+
+        final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
+    	setBackground(autoParallaxBackground);
+    	
+    	final Sprite parallaxLayerBackSprite = new Sprite(0, 0, ResourcesManager.getInstance().gbg, getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		final Sprite parallaxLayerCenterSprite = new Sprite(0, 400, ResourcesManager.getInstance().gbg, getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		final Sprite parallaxLayeTopSprite = new Sprite(0, 200, ResourcesManager.getInstance().gbg, getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		final Sprite parallaxLayeESprite = new Sprite(0, 250, ResourcesManager.getInstance().gbg, getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayerBackSprite));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayerCenterSprite));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeTopSprite));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeESprite));
+		
+		
+		
+			setBackground(autoParallaxBackground);
 	}
 
 	private void addToLife(int i)

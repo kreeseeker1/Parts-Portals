@@ -92,11 +92,11 @@ public abstract class Player extends AnimatedSprite
 		jps.addParticleInitializer(new VelocityParticleInitializer<Entity>(0,0,0,-25));
 		jps.addParticleInitializer(new AccelerationParticleInitializer<Entity>(5, -11));
 		jps.addParticleInitializer(new RotationParticleInitializer<Entity>(0.0f, 360.0f));
-		jps.addParticleInitializer(new ColorParticleInitializer<Entity>(1.0f, 1.0f, 0.0f));
+	    jps.addParticleInitializer(new ColorParticleInitializer<Entity>(.827f, .827f, .827f));
 		jps.addParticleInitializer(new ExpireParticleInitializer<Entity>(.8f,2f));
 
 		jps.addParticleModifier(new ScaleParticleModifier<Entity>(0, 5, 2.5f, 2.0f));
-		jps.addParticleModifier(new ColorParticleModifier<Entity>(1.5f, 2.5f, 1.0f, 2.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+		jps.addParticleModifier(new ColorParticleModifier<Entity>(1.5f, 2.5f, .753f, .502f, .753f, .502f, .753f, .502f));
 		jps.addParticleModifier(new AlphaParticleModifier<Entity>(1.5f, 2.5f, 1.0f, 0.0f));
 
 		scene.attachChild(jps);

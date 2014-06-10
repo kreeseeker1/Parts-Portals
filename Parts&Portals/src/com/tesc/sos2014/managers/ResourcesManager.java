@@ -165,10 +165,9 @@ public class ResourcesManager
 		// backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048,TextureOptions.BILINEAR);
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
         backgroundTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 4000, 4000);
-       //	platform1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform1.png");
-       	
-    // gamebackground. = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "background_texture.png");
-     //   gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "backgroundtexture.png",0,0);colum
+ 
+        
+        gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "backgroundtexture.png");//colum
         control_base_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "controlBase.png");
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         jetfire = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "jetfire.png");
@@ -176,8 +175,7 @@ public class ResourcesManager
        	platformmiddle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform/platform_middle.png");
        	platformright = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform/platform_right.png");
        	
-       	/*platform2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform2.png");
-       	platform3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform3.png");*/
+
         health = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "parts/health.png",2,1);
         player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "pcss2.png", 9, 1);
         player_regionl = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "pcss2r.png", 9, 1);
@@ -190,8 +188,6 @@ public class ResourcesManager
         beriusl = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "beriusl.png", 3, 1);
         scrich = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "scrich.png", 3, 1);
         
-     /*   complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "levelCompleteWindow.png");
-        complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "star.png", 2, 1);*/
 
     	try 
     	{
