@@ -763,6 +763,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			Iterator<EthsersEnemy> ee = ethsersList.iterator();
 			Iterator<BeriusEnemy> be = beriusList.iterator();
 			Iterator<BeriusLEnemy> bel = beriusLEnemyList.iterator();
+			Iterator<ScrichBossEnemy> sbe = scrichList.iterator();
+			
+			while(sbe.hasNext())
+			{
+				ScrichBossEnemy sb = sbe.next();
+				if(!sb.isDead())
+				{
+					sb.pace();
+				}
+			}
+			
 			while (bl.hasNext())
 			{
 				Bullet b = (Bullet) bl.next();
