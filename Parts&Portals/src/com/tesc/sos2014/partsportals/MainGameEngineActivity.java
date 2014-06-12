@@ -42,6 +42,7 @@ public class MainGameEngineActivity extends BaseGameActivity
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 		engineOptions.getRenderOptions().getConfigChooserOptions().setRequestedMultiSampling(true);
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);//Keep Screen on while playing
+		engineOptions.getTouchOptions().setNeedsMultiTouch(true);
 		return engineOptions;
 	}
 	//Check for touch Activity

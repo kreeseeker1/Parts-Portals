@@ -233,11 +233,27 @@ public abstract class Player extends AnimatedSprite
 
 					if (right)
 					{
-						body.setLinearVelocity(new Vector2(5, body.getLinearVelocity().y));
+						if(stop == false)
+						{
+							body.setLinearVelocity(new Vector2(5, body.getLinearVelocity().y));
+						}
+						else
+						{
+							
+						}
+						
 					}
 					if (left)
 					{
-						body.setLinearVelocity(new Vector2(-5, body.getLinearVelocity().y));
+						if(stop == false)
+						{
+							body.setLinearVelocity(new Vector2(-5, body.getLinearVelocity().y));	
+						}
+						else
+						{
+							
+						}
+						
 					}
 
 					if (stop)
@@ -325,9 +341,12 @@ public abstract class Player extends AnimatedSprite
 
 	public void stop()
 	{
-		right = false;
+			stop = true;
+		/*right = false;
 		left = false;
-		stop = true;
+		stop = true;*/
+		//this.stopAnimation(0);
+		/*this.animate(ResourcesManager.getInstance().player_region,0,);*/
 	}
 
 	public void jump()

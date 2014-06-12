@@ -59,6 +59,9 @@ public class ResourcesManager
 	public ITextureRegion play_region;
 	public ITextureRegion options_region;
 	public ITextureRegion control_base_region;
+	public ITextureRegion red_button;
+	public ITextureRegion green_button;
+	public ITextureRegion yellow_button;
 	
 	ITexture mainFontTexture = null;
 	public TextureRegion gbg ;
@@ -168,6 +171,9 @@ public class ResourcesManager
  
         
         gbg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "backgroundtexture.png");//colum
+        red_button = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "redbutton.png");
+        green_button = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "greenbutton.png");
+        yellow_button = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "yellowbutton.png");
         control_base_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "controlBase.png");
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         jetfire = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "jetfire.png");

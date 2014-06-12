@@ -76,7 +76,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 {
 	long newTime = System.nanoTime();
 	long oldTime;
-	private int life = 1000;
+	private int life = 100;
 	private HUD gameHUD;
 	private Text healthText;
 	public Text fuelText;
@@ -871,6 +871,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					{
 						Log.v("SQUISH", "Squish Activated. DEList size: " + feraalkList.size() + ". demiEnemyCount: " + demiEnemyCount);
 						fe.squish();
+						fe.body.setActive(false);
 						fel.remove();
 						b.bulletBody.setTransform(-1000, -1000, 0);
 						BulletPool.sharedBulletPool().recyclePoolItem(b);
@@ -1031,6 +1032,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public void disposeScene()
 	{
 		camera.setHUD(null);
+		//BulletPool.sharedBulletPool().
 		//camera.setChaseEntity(null);
 		//camera.setCenter(400, 240);
 		//Bullet Activity continues like normal after a GameScene -> Menu -> GameScene reset, but the sprites are not reinitialized.
@@ -1087,293 +1089,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		this.fuelText.setText((CharSequence) fuelText)  ;
 	}
 
-	private void loadLevel(int levelID)
-	{
-		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(getVbom());
-
-		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
-
-		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
-			{
-				public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException
-				{
-					final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
-					final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
-
-					camera.setBounds(0, 0, width, height); // here we set camera
-															// bounds
-					camera.setBoundsEnabled(true);
-
-					return GameScene.this;
-				}
-			});
-
-		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(TAG_ENTITY)
-			{
-				public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException
-				{
-					final int x = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_X);
-					final int y = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_Y);
-
-					final String type = SAXUtils.getAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_TYPE);
-
-					final Sprite levelObject;
-
-					if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATL))
-					{
-						levelObject = new Sprite(x, y, resourcesManager.platformleft, getVbom());
-						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformleft");
-					}
-
-					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATM))
-					{
-						levelObject = new Sprite(x, y, resourcesManager.platformmiddle, getVbom());
-						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
-					}
-
-					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATR))
-					{
-						levelObject = new Sprite(x, y, resourcesManager.platformright, getVbom());
-						PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformright");
-					}
-					/*
-					 * else if
-					 * (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2))
-					 * { levelObject = new Sprite(x, y,
-					 * resourcesManager.platform2_region, vbom); final Body body
-					 * = PhysicsFactory.createBoxBody(physicsWorld, levelObject,
-					 * BodyType.StaticBody, FIXTURE_DEF);
-					 * body.setUserData("platform2");
-					 * physicsWorld.registerPhysicsConnector(new
-					 * PhysicsConnector(levelObject, body, true, false)); } else
-					 * if
-					 * (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
-					 * { levelObject = new Sprite(x, y,
-					 * resourcesManager.platform3_region, vbom); final Body body
-					 * = PhysicsFactory.createBoxBody(physicsWorld, levelObject,
-					 * BodyType.StaticBody, FIXTURE_DEF);
-					 * body.setUserData("platform3");
-					 * physicsWorld.registerPhysicsConnector(new
-					 * PhysicsConnector(levelObject, body, true, false)); }
-					 */
-					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HEALTH))
-					{
-
-						health = new Health(x, y, getVbom(), camera, physicsWorld)
-							{
-
-								@Override
-								protected void onManagedUpdate(float pSecondsElapsed)
-								{
-									super.onManagedUpdate(pSecondsElapsed);
-									this.animateMe();
-
-									if (player.collidesWith(this) || this.collidesWith(player))
-									{
-										this.setWidth(0);
-										this.setHeight(0);
-										addToLife(100);
-										this.setVisible(false);
-										this.squish();
-
-										this.setIgnoreUpdate(true);
-										this.clearEntityModifiers();
-										this.clearUpdateHandlers();
-
-										int childCount = this.getParent().getChildCount();
-
-										Log.d("ChildCount :" + childCount, "Total Number of children");
-
-									}
-
-								}
-
-								@Override
-								public void onDie()
-								{
-
-								}
-
-							};
-
-						levelObject = health;
-
-						// following codes causes auto-scaling loop of the
-						// object
-						// levelObject.registerEntityModifier(new
-						// LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
-					}
-
-					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER))
-					{
-						player = new Player(x, y, getVbom(), camera, physicsWorld)
-							{
-
-								/*@Override
-								public void onDie()
-								{
-									if (!gameOverDisplayed)
-									{
-										displayGameOverText();
-									}
-									this.body.setActive(false);// removes body
-									this.setPosition(2000, 1000);// causes
-*/																	// enemies
-																	// to run to
-																	// different
-																	// part of
-																	// screen
-									// this.detachSelf(); //This works I think
-									// by setting your x,y to 0,0
-								//}
-							};
-						MassData data = new MassData();
-						data.mass = 2000f;
-
-						player.body.setMassData(data);
-						levelObject = player;
-					}
-
-					else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY))
-					{
-
-						// Log.v("Demi Enemy Added " , "Creating DemiEnemy");
-						DE = FeraalkEnemyPool.sharedDemiEnemyPool().obtainPoolItem();
-						// Log.v("Demi Enemy Added 2" , "Creating DemiEnemy");
-
-						DE.aSprite.setPosition(x, y);
-						// Log.v("Demi Enemy Added 3" , "Creating DemiEnemy");
-						DE.aSprite.setVisible(true);
-						// Log.v("Demi Enemy Added 4" , "Creating DemiEnemy");
-						DE.aSprite.detachSelf();
-						Log.v("Demi Enemy Added 5", "Creating DemiEnemy");
-						DE.aSprite.setSize(40, 40);
-						DE.animateMe();
-						Log.v("DEList", "Demi Enemy Count Size: " + this.toString());
-						Log.v("Demi Enemy Add ", "Demi Enemy Count Size: " + demiEnemyCount);
-						demiEnemyCount++;
-
-						attachFeraalkEnemy(DE);
-						// Log.v("Demi Enemy Add " , "Demi Enemy List Size: " +
-						// demiEnemyList.size());
-						// demiEnemyList.add(DE);
-						// GameScene.instance.attachDemiEnemy(DE);
-
-						// }
-						// DE =
-						// DemiEnemyPool.sharedBulletPool().obtainPoolItem();
-
-						/*
-						 * //enemy = new Monkey(x, y, getVbom(), camera,
-						 * physicsWorld) {
-						 * 
-						 * @Override protected void onManagedUpdate(float
-						 * pSecondsElapsed) {
-						 * super.onManagedUpdate(pSecondsElapsed);
-						 * 
-						 * this.setSpeed((int) (Math.random() * 15));
-						 * 
-						 * this.animateMe();
-						 * 
-						 * // time delta oldTime = newTime; newTime =
-						 * System.nanoTime();
-						 * 
-						 * // float lastPos = this.getY(); if (getDiff(oldTime,
-						 * newTime) > 1000000 && player.getY() > this.getY() +
-						 * 5) { this.setFootContactsOne(); this.jump(); //
-						 * this.setFootContactsZero(); }
-						 * 
-						 * // According to tutorial this following code //
-						 * should be checked in the cleaner method
-						 * 
-						 * if(bullet.collidesWith(this)) { this.takeDamage(-50);
-						 * if(this.getLife() <= 0) { this.onDie();
-						 * this.setVisible(false); this.setIgnoreUpdate(true);
-						 * this.squish();
-						 * 
-						 * } }
-						 * 
-						 * 
-						 * if (life <= 0) {
-						 * 
-						 * player.onDie(); player.setVisible(false);
-						 * player.setIgnoreUpdate(true); player.onDetached();
-						 * playerIsDead = true; } if (player.getX() <
-						 * this.getX() - Math.random() * 10) {
-						 * 
-						 * this.setFlippedHorizontal(false); this.runLeft();
-						 * goingLeft = true; goingRight = false;
-						 * 
-						 * } else if (player.getX() > this.getX() +
-						 * Math.random() * 10) {
-						 * 
-						 * this.setFlippedHorizontal(true); this.runRight();
-						 * goingRight = true; goingLeft = false;
-						 * 
-						 * } if (player.collidesWith(this) ||
-						 * this.collidesWith(player)) { addToScore(-1);
-						 * 
-						 * }
-						 * 
-						 * Iterator<Bullet> it2 = bulletList.iterator();
-						 * 
-						 * if (it2 != null) {
-						 * 
-						 * while (it2.hasNext()) { Bullet b2 = (Bullet)
-						 * it2.next(); if (this.collidesWith(b2.sprite)) {
-						 * this.onDie(); } } }
-						 * 
-						 * }
-						 * 
-						 * private double getDiff(long oldTime, long newTime) {
-						 * return newTime - oldTime; }
-						 * 
-						 * @Override public void onDie() {
-						 * this.setVisible(false); this.squish();
-						 * 
-						 * } };
-						 */
-						/*
-						 * enemy.setSize(75, 50); enemy.setSpeed((int)
-						 * (Math.random() * 15));
-						 */
-						FeraalkEnemy de2 = new FeraalkEnemy();
-
-						de2.aSprite.setUserData(ResourcesManager.getInstance().bullet);
-
-						levelObject = de2.aSprite;
-					} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE))
-					{
-						levelObject = new Sprite(x, y, resourcesManager.complete_stars_region, getVbom())
-							{
-								@Override
-								protected void onManagedUpdate(float pSecondsElapsed)
-								{
-									super.onManagedUpdate(pSecondsElapsed);
-
-									if (player.collidesWith(this))
-									{
-										// levelCompleteWindow.display(StarsCount.TWO,
-										// GameScene.this, camera);
-										// this.setVisible(false);
-										// this.setIgnoreUpdate(true);
-									}
-								}
-							};
-						levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
-					} else
-					{
-						throw new IllegalArgumentException();
-					}
-
-					levelObject.setCullingEnabled(true);
-
-					return levelObject;
-				}
-			});
-
-		levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
-	}
+	
 
 	private void createGameOverText()
 	{
@@ -1412,7 +1128,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		fuelText.setAnchorCenter(0, 0);
 		
 		scoreText.setText("Score:0");
-		healthText.setText("Health: 1000");
+		healthText.setText("Health: 100");
 		fuelText.setText("Fuel: 150");
 		
 		xText.setText("X: " );
@@ -1451,37 +1167,47 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		stick.getControlBase().setAlpha(0.5f);
 		stick.getControlKnob().setAlpha(0.5f);
 
-		final Rectangle left = new Rectangle(20, 90, 60, 60, getVbom())
+		final Sprite left = new Sprite(40, 90, 60, 60,ResourcesManager.getInstance().green_button.deepCopy(), getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
 					if (touchEvent.isActionDown())
 					{
 						player.runLeft();
-						// fire(player);
+						player.setFlippedHorizontal(true);
 
 					}
+					else if(touchEvent.isActionUp())
+					{
+						player.stop();
+						player.stopAnimation(0);
+					}
+					
 
 					return true;
 				};
 			};
 
-		final Rectangle right = new Rectangle(camera.getWidth() - 60, 90, 60, 60, getVbom())
+		final Sprite right = new Sprite(camera.getWidth() - 60, 90, 60, 60, ResourcesManager.getInstance().green_button.deepCopy(), getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
 					if (touchEvent.isActionDown())
 					{
 						player.runRight();
+						player.setFlippedHorizontal(false);
 					}
-					/*
-					 * else { player.stop(); }
-					 */
+					else if(touchEvent.isActionUp())
+					{
+						player.stop();
+						player.stopAnimation(0);
+					}
+					
 					return true;
 				};
 			};
 
-		final Rectangle fire = new Rectangle(camera.getWidth() - 60, 180, 60, 60, getVbom())
+		final Sprite fire = new Sprite(camera.getWidth() - 60, 180, 60, 60, ResourcesManager.getInstance().red_button.deepCopy(), getVbom())
 			{
 				public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
 				{
@@ -1490,6 +1216,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						synchronized (this)
 						{
 							player.shoot();
+							//right.onAreaTouched( touchEvent.isActionDown() , 0f, 0f);
 						}
 
 					}
@@ -1499,10 +1226,36 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					return true;
 				};
 			};
+			
+			final Sprite launch = new Sprite(40, 180, 60, 60, ResourcesManager.getInstance().yellow_button.deepCopy(), getVbom())
+				{
+					public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y)
+					{
+						if (touchEvent.isActionDown())
+						{
+							player.setJumping(true);
+							player.jps.setParticlesSpawnEnabled(true);
+							//fuelText.setText("Fuel: " + player.getJumpTimer());
+
+						}
+						else if(touchEvent.isActionUp())
+						{
+							player.setJumping(false);
+							player.jps.setParticlesSpawnEnabled(false);
+						}
+						/*
+						 * else { player.stop(); }
+						 */
+						return true;
+					};
+				};
+			
+			
 
 		gameHUD.registerTouchArea(left);
 		gameHUD.registerTouchArea(right);
 		gameHUD.registerTouchArea(fire);
+		gameHUD.registerTouchArea(launch);
 
 		// gameHUD.registerTouchArea(stick);
 		// gameHUD.attachChild(stick);
@@ -1510,6 +1263,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		gameHUD.attachChild(left);
 		gameHUD.attachChild(right);
 		gameHUD.attachChild(fire);
+		gameHUD.attachChild(launch);
 
 		gameHUD.setTouchAreaBindingOnActionDownEnabled(true);
 		gameHUD.setTouchAreaBindingOnActionMoveEnabled(true);
@@ -1540,22 +1294,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
         final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
     	setBackground(autoParallaxBackground);
     	
-    	final Sprite parallaxLayerBackSprite = new Sprite(0, 0, ResourcesManager.getInstance().gbg, getVbom());
+    	final Sprite parallaxLayerBackSprite = new Sprite(0, 0, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
 		parallaxLayerBackSprite.setOffsetCenter(0, 0);
 		
-		final Sprite parallaxLayerCenterSprite = new Sprite(0, 400, ResourcesManager.getInstance().gbg, getVbom());
+		final Sprite parallaxLayerCenterSprite = new Sprite(250, 400, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
 		parallaxLayerBackSprite.setOffsetCenter(0, 0);
 		
-		final Sprite parallaxLayeTopSprite = new Sprite(0, 200, ResourcesManager.getInstance().gbg, getVbom());
+		final Sprite parallaxLayeTopSprite = new Sprite(250, 200, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
 		parallaxLayerBackSprite.setOffsetCenter(0, 0);
 		
-		final Sprite parallaxLayeESprite = new Sprite(0, 250, ResourcesManager.getInstance().gbg, getVbom());
+		final Sprite parallaxLayeESprite = new Sprite(0, 400, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		final Sprite parallaxLayeESprite1 = new Sprite(0, 230, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		
+		final Sprite parallaxLayeESprite2 = new Sprite(100, 270, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
+		parallaxLayerBackSprite.setOffsetCenter(0, 0);
+		//
+		
+		final Sprite parallaxLayeESprite3 = new Sprite(0, 200, ResourcesManager.getInstance().gbg.deepCopy(), getVbom());
 		parallaxLayerBackSprite.setOffsetCenter(0, 0);
 		
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayerBackSprite));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayerCenterSprite));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeTopSprite));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeESprite));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeESprite1));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeESprite2));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, parallaxLayeESprite3));
 		
 		
 		
