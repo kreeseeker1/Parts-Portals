@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tesc.sos2014.managers.ResourcesManager;
+import com.tesc.sos2014.objects.Player;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 
 public class FeraalkEnemy
@@ -22,13 +23,16 @@ public class FeraalkEnemy
 	private boolean goRight = false;
 	private boolean goLeft = false;
 	
+	int pacingcountl = 15;
+	int pacingcountr = 15;
+	
 	Random r = new Random();
 	private int runRight = r.nextInt(50);
 	private int runLeft = r.nextInt(50);
 	private boolean canJump = true;
 	private int footContacts = 0;
 	private int life = 100;
-	public int speed = 10;
+	public int speed = 6;
 	public int jumpert = 100;
 	public AnimatedSprite aSprite;
 	
@@ -60,61 +64,6 @@ public class FeraalkEnemy
 	}
 
 
-	/*private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
-	{
-		body = PhysicsFactory.createBoxBody(physicsWorld, aSprite, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(-53, 0, 0));
-		// dynamic bodies can collide with each other and kinematic and static
-		// bodies
-
-		body.setUserData("enemy"); // Set the sprite image
-		body.setFixedRotation(false); // wont tumble I assume
-	}*/
-		/*physicsWorld.registerPhysicsConnector(new PhysicsConnector(aSprite, body, true, false)
-			{
-				@Override
-				public void onUpdate(float pSecondsElapsed)
-				{
-
-					super.onUpdate(pSecondsElapsed);// This is very important to
-													// be in this exact spot
-					// camera.onUpdate(0.1f);
-
-					if (aSprite.getY() <= 0) // Body falls below bottom of scene
-					{
-						onDie();
-					}
-
-					if (goRight)
-					{
-						// super.onUpdate(pSecondsElapsed);
-						body.setLinearVelocity(new Vector2(speed, body.getLinearVelocity().y));// with
-																								// the
-																								// speed
-																								// of
-																								// 3
-																								// move
-																								// right
-						// I think that this is where we could add code to get
-						// the character to face the right direction
-						// animate(ENEMY_ANIMATE, 0, 2,true);
-					}
-					if (goLeft)
-					{
-						// super.onUpdate(pSecondsElapsed);
-						body.setLinearVelocity(new Vector2(-speed, body.getLinearVelocity().y));// with
-																								// the
-																								// speed
-																								// f
-																								// 3
-																								// move
-																								// left
-						// I think that this is where we could add code to get
-						// the character to face the right direction
-						// animate(ENEMY_ANIMATE, 0, 2, true);
-					}
-				}
-			});
-	}*/
 
 	public void runRight()
 	{
@@ -163,6 +112,81 @@ public class FeraalkEnemy
 				runLeft = 50;
 				runRight = 50;
 			}
+		}
+	
+	public boolean canSee(Player player)
+		{
+			if(player.getX() < aSprite.getX()-250 || player.getX() > aSprite.getX() + 250)
+			{
+				return false;
+			}
+			else return true;
+		}
+	
+	public boolean onMyLeft(Player player)
+		{
+			if(player.getX() < aSprite.getX())
+			{
+				return true;
+			}
+			else return false;
+		}
+	
+	public boolean onMyRight(Player player)
+		{
+			if(player.getX() > aSprite.getX())
+			{
+				return true;
+			}
+			else return false;
+		}
+	
+	public void jumpAt(Player player)
+		{
+			if(player.getX() > aSprite.getX())
+			{
+			
+				body.setLinearVelocity(speed*3, body.getLinearVelocity().y+.5f);
+				aSprite.setFlippedHorizontal(true);
+			}
+			else if(player.getX() < aSprite.getX())
+			{
+				body.setLinearVelocity(-1 *speed*3,body.getLinearVelocity().y+.5f);
+				aSprite.setFlippedHorizontal(false);
+			}
+		}
+	
+
+	public void paceFacing(Player player)
+		{
+			if(player.getX() > aSprite.getX())
+			{
+				aSprite.setFlippedHorizontal(true);
+				
+			}
+			else if(player.getX() < aSprite.getX())
+			{
+				aSprite.setFlippedHorizontal(false);
+			}
+			
+			if (pacingcountl > 0)
+			{
+				body.setLinearVelocity(new Vector2(speed/2, body.getLinearVelocity().y));
+				pacingcountl --;
+			}
+			else if(pacingcountl <= 0 && pacingcountr > 0)
+			{
+				body.setLinearVelocity(new Vector2(-1 * speed/2, body.getLinearVelocity().y));
+				pacingcountr --;
+			}
+			else if(pacingcountl <=0 && pacingcountr <= 0)
+			{
+				pacingcountl = 15;
+				pacingcountr = 15;
+			}
+			
+			
+			
 		}
 
 	public int getSpeed()
@@ -243,6 +267,7 @@ public class FeraalkEnemy
 	{
 		footContacts--;
 	}
+
 
 	
 }

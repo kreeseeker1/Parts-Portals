@@ -940,25 +940,30 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 
 					fe.aSprite.setVisible(false);
+					fe.body.setActive(false);
 					FeraalkEnemyPool.sharedDemiEnemyPool().recyclePoolItem(fe);
 				} 
 				else if (!fe.isDead())
 				{
-					if(player.getX() < fe.aSprite.getX()-250 || player.getX() > fe.aSprite.getX() + 250 )//&& player.getY() < fe.aSprite.getY() + 100 )
-					{
-					fe.pace();
-					}
+					if(!fe.canSee(player) )//&& player.getY() < fe.aSprite.getY() + 100 )
+					 {
+					  fe.pace();
+					 }
 					else
-					{
-						if(player.getX() > fe.aSprite.getX() - 250)
+					 {
+						if(fe.canSee(player) && fe.onMyLeft(player))
 						{
-							fe.runLeft();
+							fe.paceFacing(player);
+							//fe.paceFacing(player);
+							//fe.jumpAt(player);
 						}
-						else if(player.getX() < fe.aSprite.getX() + 250)
+						else if(fe.canSee(player) &&fe.onMyRight(player))
 						{
-							fe.runRight();
+							fe.paceFacing(player);
+							//fe.paceFacing(player);
+							//fe.jumpAt(player);
 						}
-					}
+					 } 
 				}
 			}
 				
@@ -1016,7 +1021,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void onBackKeyPressed()
 	{
-		bulletList.clear();
+		//bulletList.clear();
 
 		
 		SceneManager.getInstance().loadMenuScene(engine);
@@ -1032,11 +1037,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public void disposeScene()
 	{
 		camera.setHUD(null);
-		//BulletPool.sharedBulletPool().
+		
 		//camera.setChaseEntity(null);
 		//camera.setCenter(400, 240);
 		//Bullet Activity continues like normal after a GameScene -> Menu -> GameScene reset, but the sprites are not reinitialized.
-		//bulletList.clear();
+		bulletList.clear();
 
 		// code responsible for disposing scene
 		// removing all game scene objects.
@@ -1370,75 +1375,5 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	private ContactListener contactListener()
 	{
-		ContactListener contactListener = new ContactListener()
-			{
-				public void beginContact(Contact contact)
-				{
-					final Fixture x1 = contact.getFixtureA();
-					final Fixture x2 = contact.getFixtureB();
-					// error checking for non-existent objects
-					if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null)
-					{
-						if (x2.getBody().getUserData().equals("player"))
-						{// player
-							player.increaseFootContacts();
-						}
-						/*
-						 * if (x2.getBody().getUserData().equals("enemy")) {
-						 * //enemy
-						 * 
-						 * enemy.increaseFootContacts(); }
-						 */
-
-						if (x1.getBody().getUserData().equals("platform2") && x2.getBody().getUserData().equals("player"))
-						{
-							engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback()
-								{
-									public void onTimePassed(final TimerHandler pTimerHandler)
-									{
-										pTimerHandler.reset();
-										engine.unregisterUpdateHandler(pTimerHandler);
-										x1.getBody().setType(BodyType.DynamicBody);
-									}
-								}));
-						}
-
-						if (x1.getBody().getUserData().equals("platform3") && x2.getBody().getUserData().equals("player"))
-						{
-							x1.getBody().setType(BodyType.DynamicBody);
-						}
-					}
-				}
-
-				public void endContact(Contact contact)
-				{
-					final Fixture x1 = contact.getFixtureA();
-					final Fixture x2 = contact.getFixtureB();
-
-					if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null)
-					{
-						if (x2.getBody().getUserData().equals("player"))
-						{
-							player.decreaseFootContacts();
-						}
-
-						/*
-						 * if (x2.getBody().getUserData().equals("enemy")) {
-						 * enemy.decreaseFootContacts(); }
-						 */
-					}
-				}
-
-				public void preSolve(Contact contact, Manifold oldManifold)
-				{
-
-				}
-
-				public void postSolve(Contact contact, ContactImpulse impulse)
-				{
-
-				}
-			};
-		return contactListener;
-	}
+		return null;}
 }

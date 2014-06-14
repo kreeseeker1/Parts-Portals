@@ -114,6 +114,8 @@ public class SceneManager
 	{
 		setScene(loadingScene);
 		ResourcesManager.getInstance().unloadMenuTextures();
+		if(gameScene == null)
+		{
 		mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() 
 		{
             public void onTimePassed(final TimerHandler pTimerHandler) 
@@ -126,6 +128,11 @@ public class SceneManager
         		MainGameEngineActivity.getSharedInstance().mCurrentScene = gameScene;
             }
 		}));
+		}
+		else if(gameScene != null)
+		{
+			setScene(gameScene);
+		}
 	}
 	
 	public void loadMenuScene(final Engine mEngine)
