@@ -156,6 +156,21 @@ public class FeraalkEnemy
 			}
 		}
 	
+	public void jumpBack(Player player)
+		{
+			if(player.getX() > aSprite.getX())
+			{
+			
+				body.setLinearVelocity(-1 *speed*3, body.getLinearVelocity().y+.5f);
+				aSprite.setFlippedHorizontal(true);
+			}
+			else if(player.getX() < aSprite.getX())
+			{
+				body.setLinearVelocity(speed*3,body.getLinearVelocity().y+.5f);
+				aSprite.setFlippedHorizontal(false);
+			}
+		}
+	
 
 	public void paceFacing(Player player)
 		{
@@ -184,9 +199,6 @@ public class FeraalkEnemy
 				pacingcountl = 15;
 				pacingcountr = 15;
 			}
-			
-			
-			
 		}
 
 	public int getSpeed()
