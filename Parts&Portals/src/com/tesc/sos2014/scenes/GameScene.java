@@ -81,6 +81,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		Rectangle r1 = null;
 		Rectangle r2 = null;
 		Rectangle r3 = null;
+		Rectangle r4 = null;
 		private int playerIndex = 0;
 		private int pf = 20;
 
@@ -253,6 +254,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				Sprite s = new Sprite(floorList.get(i).getCoordinate().getX() * 50, floorList.get(i).getCoordinate().getY() * 50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());
 				PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
 
+				
+				Rectangle fr = new Rectangle(0,0,2,2,getVbom());
+				fr.setColor(Color.WHITE);
+				
+				s.attachChild(fr);
+				
+				
+				
 				floorSpriteList.add(s);
 
 				this.attachChild(s);
@@ -263,6 +272,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
 				Sprite s = new Sprite(wallList.get(i).getCoordinate().getX() * 50, wallList.get(i).getCoordinate().getY() * 50, ResourcesManager.getInstance().platformmiddle.deepCopy(), getVbom());
 				PhysicsFactory.createBoxBody(physicsWorld, s, BodyType.StaticBody, FIXTURE_DEF).setUserData("platformmiddle");
+				
+				Rectangle fr = new Rectangle(0,0,2,2,getVbom());
+				fr.setColor(Color.WHITE);
+				
+				s.attachChild(fr);
 				this.attachChild(s);
 
 				wallSpriteList.add(s);
@@ -364,6 +378,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				r3 = new Rectangle(0,player.getHeight(),2,2,getVbom());
 				r3.setColor(Color.YELLOW);
 				player.attachChild(r3);
+				
+				r4 = new Rectangle(player.getHeight()/2,player.getHeight()/2, 2,2,getVbom());
+				r4.setColor(Color.PINK);
+				player.attachChild(r4);
+				
 				
 				
 
@@ -1354,11 +1373,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				life = 0;
 				healthText.setText("Life: " + life + "hp");
 				camera.setChaseEntity(null);
-				//player.setPosition(-1000,-1000);
+				player.setPosition(-10000,-10000);
 				player.setX(-10000f);
 				player.setY(-10000f);
 				
-				//player.body.setActive(false);
+				player.body.setActive(false);
 			//	player.detachSelf();
 				
 				//player.setVisible(false);
