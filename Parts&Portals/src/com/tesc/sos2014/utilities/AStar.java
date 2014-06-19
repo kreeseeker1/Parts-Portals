@@ -20,15 +20,15 @@ public class AStar
 		// ===========================================================
 		// Constructors
 		// ===========================================================
-		public AStar(int pRows, int pCols, int pWidth, int pHeight)
+		public AStar(int pRows, int pCols, float f, float g)
 			{
 				// pWidth = total width in pixels
 				// pHeight = total height in pixels
 				grid = new GridLoc[pRows][pCols];
 				rowMax = pRows - 1;
 				colMax = pCols - 1;
-				cellWidth = pWidth / pCols;
-				cellHeight = pHeight / pRows;
+				cellWidth = (int) (f / pCols);
+				cellHeight = (int) (g / pRows);
 				for (int i = 0; i < pRows; i++)
 				{
 					for (int j = 0; j < pCols; j++)

@@ -15,10 +15,10 @@ import com.tesc.sos2014.managers.ResourcesManager;
 import com.tesc.sos2014.objects.Player;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
 
-public class FeraalkEnemy
+public class FeraalkEnemy extends BaseEnemy
 {
 
-	final long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
+	final static long[] ENEMY_ANIMATE = new long[] { 100, 100, 100 };
 	public Body body;
 	private boolean goRight = false;
 	private boolean goLeft = false;
@@ -42,7 +42,7 @@ public class FeraalkEnemy
 	public FeraalkEnemy()
 		{
 
-			
+			super(ResourcesManager.getInstance().enemy.deepCopy(), ENEMY_ANIMATE);
 			aSprite = new AnimatedSprite(0, 0, ResourcesManager.getInstance().enemy.deepCopy(), MainGameEngineActivity.getSharedInstance().getVertexBufferObjectManager());
 			aSprite.setSize(50, 45);
 			aSprite.animate(ENEMY_ANIMATE);

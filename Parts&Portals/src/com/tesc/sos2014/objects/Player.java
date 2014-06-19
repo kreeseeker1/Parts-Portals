@@ -52,6 +52,7 @@ public abstract class Player extends AnimatedSprite
 	private int jumpRecharge = 75;
 	private int dblJumpTimer = 50;
 	private boolean jumping = false;
+	private boolean flying = false;
 	public boolean isParticleSpawned = true;
 	PointParticleEmitter pe;
 	boolean jetfireCalled = false;
@@ -129,6 +130,11 @@ public abstract class Player extends AnimatedSprite
 	{
 		return isParticleSpawned;
 	}
+	
+	public boolean isFlying()
+	{
+		return flying;
+	}
 
 
 
@@ -191,7 +197,7 @@ public abstract class Player extends AnimatedSprite
 						
 						if(jumpTimer >= 1)
 						{
-							
+							flying = true;
 							GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
 						
 							scene.fuelText.setText(("Fuel: "+ jumpTimer));
@@ -216,7 +222,7 @@ public abstract class Player extends AnimatedSprite
 						else if(jumpTimer <= 0)
 						{
 							GameScene scene = (GameScene) MainGameEngineActivity.getSharedInstance().mCurrentScene;
-							
+							flying = false;
 							
 							scene.fuelText.setText(("Fuel:Charging" ));
 							jumpRecharge --;

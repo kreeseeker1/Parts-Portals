@@ -23,6 +23,8 @@ public class BaseEnemy
 	
 	public int runRight,runLeft = 50;
 	
+	public int aStarIndex = 0;
+	
 	private boolean isDead = false;
 
 
