@@ -1,11 +1,15 @@
 package com.tesc.sos2014.objectenemies;
 
+import java.util.ArrayList;
+
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.tesc.sos2014.partsportals.MainGameEngineActivity;
+import com.tesc.sos2014.utilities.Coordinate;
+import com.tesc.sos2014.utilities.Tiles;
 
 public class BaseEnemy
 {
@@ -20,6 +24,9 @@ public class BaseEnemy
 	public int speed = 10;
 	public int jumpert = 100;
 	public AnimatedSprite aSprite;
+	
+	public Tiles t = new Tiles();
+	
 	
 	public int runRight,runLeft = 50;
 	
@@ -38,6 +45,11 @@ public class BaseEnemy
 			aSprite.animate(ENEMY_ANIMATE);
 			
 		}
+	
+	public void getNextTiles()
+	{
+		ArrayList<Coordinate> tl = t.getFourTiles(this);
+	}
 
 	public int getLife()
 	{

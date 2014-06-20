@@ -704,6 +704,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				Iterator<FeraalkEnemy> fel = feraalkList.iterator();
 				for(int i=0; i<= feraalkList.size()-1;i++)
 				{
+					//ParsePngFile.b.getWidth();
 					if(feraalkList.get(i).aSprite.collidesWith(player))
 					{
 						addToLife(-1);

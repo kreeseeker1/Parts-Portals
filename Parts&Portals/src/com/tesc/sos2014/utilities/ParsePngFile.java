@@ -18,6 +18,7 @@ public class ParsePngFile {
 
 	private Context context;
 	private static List<Entity> entities = new ArrayList<Entity>();
+	public static Bitmap b = null;
 	
 	
 	public ParsePngFile(Context context) {
@@ -26,7 +27,7 @@ public class ParsePngFile {
 
 	public static void parsePNGFile() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		Bitmap b = BitmapFactory.decodeResource(
+	   b = BitmapFactory.decodeResource(
 				ResourcesManager.getInstance().activity.getResources(),
 				com.tesc.sos2014.R.drawable.level_01, options);
 			
